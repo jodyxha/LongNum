@@ -1,0 +1,17 @@
+- create new repository "LongNum" in  github
+- move to where you want your repository
+- clone the repo
+  git clone https://github.com/jodyxha/LongNum
+  (will create a subdir LongNum)
+- fill it the files you want to upload
+- add the files
+  git add .
+  or 
+  git add TokenScanner.h lcalc.cpp
+- commit the files
+  git commit -m "a message for this commit)
+- upload it
+  git push origin
+  
+  ussername: jodyxha
+  access token:new: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
