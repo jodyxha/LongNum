@@ -1,0 +1,52 @@
+.. _multiplication_ref:
+
+Multiplication
+==============
+
+.. rst-class:: hidden
+
+   This page describes the :index:`Multiplication` algorithm
+
+For the multiplication of to positive numbers, we use two algorithms:
+* multiplying a ``LongNum`` with a single digit
+* multiplying two ``LongNum`` objects
+
+The algorithm for the multiplication of a positive number with a single-digit Number
+------------------------------------------------------------------------------------
+
+**Input**:
+  | ``lN``  positive ``LongNum`` object
+  | ``d``   ``char``
+
+**I1**: 
+    | Set the result ``sResult`` to the empty string
+    | Set the carry ``cCarry`` too the ``char`` '0'
+
+.. code-block:: c++
+
+    std::string sResult = "";
+    char cCarry = '0';
+
+**I2**:
+    Get the string of ``lN`` digits into the string ``s1``
+
+.. code-block:: c++
+
+     std::string s1 = lN.getDigits();
+
+**L0**:
+ Loop through all digits in ``s1``, starting with the least significant one (at position 0).
+
+**L1**: 
+    Set the digit ``c1`` to the character at the current position in the string ``s1``.
+        
+.. code-block:: c++
+   
+    char c1 = s1.at(i);
+
+**L2**: 
+    Find the product if the digit ``c1`` and `d`` s2 from the :ref:`multiplication table<MulTable_ref>, with a potential new carry.
+
+.. code-block:: c++
+
+    const cresult crp = lN.getOperationTables()->mul(c1, c);
