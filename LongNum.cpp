@@ -16,7 +16,7 @@ bool LongNum::lessThan(LongNum lN1, LongNum lN2) {
     std::string s2;
     makeCompatibleStrings(lN1, lN2, s1, s2);
 
-    //    printf("operator< working with [%s] and [%s], commas: %u\n", s1.c_str(), s2.c_str(), lN1.getCurCommas());
+    //    printf("operator< working with [%s] and [%s], post digits: %u\n", s1.c_str(), s2.c_str(), lN1.getPostDigits());
 
     bool bLess = true;
     if (s1 == s2) {
@@ -63,7 +63,7 @@ bool LongNum::operator<(LongNum lN) {
 bool LongNum::operator==(LongNum lN) { 
     normalize();
     lN.normalize();
-    return (m_sDigits == lN.getDigits()) && (m_iCurCommas == lN.getCurCommas()) && (isNegative() == lN.isNegative());
+    return (m_sDigits == lN.getDigits()) && (m_iPostDigits == lN.getPostDigits()) && (isNegative() == lN.isNegative());
 }
 
 
@@ -74,7 +74,7 @@ bool LongNum::operator==(LongNum lN) {
 LongNum::LongNum(uchar iBase) 
     : m_sDigits(""),
       m_iSign(1),
-      m_iCurCommas(0),
+      m_iPostDigits(0),
       m_pDOT(BaseManager::getInstance()->getOperationTables(iBase)) {
     
 }
@@ -87,7 +87,7 @@ LongNum::LongNum(uchar iBase)
 LongNum::LongNum(const LongNum &rLongNum, uchar iBase) 
     : m_sDigits(rLongNum.m_sDigits),
       m_iSign(rLongNum.m_iSign),
-      m_iCurCommas(rLongNum.m_iCurCommas),
+      m_iPostDigits(rLongNum.m_iPostDigits),
       m_pDOT(BaseManager::getInstance()->getOperationTables(iBase)) {
 
 }
@@ -100,13 +100,13 @@ LongNum::LongNum(const LongNum &rLongNum, uchar iBase)
 LongNum::LongNum(const std::string sHumanReadable, uchar iBase)
     : m_sDigits(""),
       m_iSign(1),
-      m_iCurCommas(0),
+      m_iPostDigits(0),
       m_iBase(iBase),
       m_pDOT(BaseManager::getInstance()->getOperationTables(iBase)) {
     
 
     bool bAfterDot = true;
-    uint iPostCommas = 0;
+    uint iPostDigits = 0;
     std::string sHumanReadable1(sHumanReadable);
     if (sHumanReadable1.substr(0, 2) == "0.") {
         sHumanReadable1 = sHumanReadable1.substr(1);
@@ -120,7 +120,7 @@ LongNum::LongNum(const std::string sHumanReadable, uchar iBase)
         } else if (m_pDOT->isDigit(c)) {
             m_sDigits = m_sDigits + c;
             if (bAfterDot) {
-                iPostCommas++;
+                iPostDigits++;
             }
         } else if (c == '-') {
             if (i == 1) {
@@ -137,8 +137,8 @@ LongNum::LongNum(const std::string sHumanReadable, uchar iBase)
                 throw(sErr);
         }
     }
-    m_iCurCommas = bAfterDot?0:iPostCommas;
-    //printf("in:[%s] digs:[%s], curcommas %u, sign %d\n", sHumanReadable.c_str(), m_sDigits.c_str(), m_iCurCommas, m_iSign);
+    m_iPostDigits = bAfterDot?0:iPostDigits;
+    //printf("in:[%s] digs:[%s], postdigit %u, sign %d\n", sHumanReadable.c_str(), m_sDigits.c_str(), m_iPostDigits, m_iSign);
 }
 
 
@@ -146,10 +146,10 @@ LongNum::LongNum(const std::string sHumanReadable, uchar iBase)
 // constructor
 //  from elements
 // 
-LongNum::LongNum(const std::string sDigits, uint iCommas, uchar iBase, char iSign)
+LongNum::LongNum(const std::string sDigits, uint iPostDigits, uchar iBase, char iSign)
     : m_sDigits(sDigits),
       m_iSign(iSign),
-      m_iCurCommas(iCommas),
+      m_iPostDigits(iPostDigits),
       m_iBase(iBase),
       m_pDOT(BaseManager::getInstance()->getOperationTables(iBase)) {
 
@@ -163,7 +163,7 @@ LongNum::LongNum(const std::string sDigits, uint iCommas, uchar iBase, char iSig
 LongNum::LongNum(char cDigit, uchar iBase) 
     : m_sDigits(""),
       m_iSign(1),
-      m_iCurCommas(0),
+      m_iPostDigits(0),
       m_iBase(iBase),
       m_pDOT(BaseManager::getInstance()->getOperationTables(iBase)) {
     m_sDigits = cDigit;
@@ -189,15 +189,15 @@ void  LongNum::zeropadFront(std::string &sDigits, uint iNum) {
 
 //----------------------------------------------------------------------------
 // shift
-//  if there are digits after the comma, change iCurCommas,
+//  if there are digits after the decimal point, change iPostDigits,
 //  otherwise, add trailing zeros (multiplication by base)
 //
 void LongNum::shift(uint iNum) {
-    if (m_iCurCommas >= iNum) {
-        m_iCurCommas -= iNum;
+    if (m_iPostDigits >= iNum) {
+        m_iPostDigits -= iNum;
     } else { 
-        zeropadBack(m_sDigits, iNum - m_iCurCommas);
-        m_iCurCommas = 0;
+        zeropadBack(m_sDigits, iNum - m_iPostDigits);
+        m_iPostDigits = 0;
     }
 }
 
@@ -206,7 +206,7 @@ void LongNum::shift(uint iNum) {
 // unshift
 //
 void LongNum::unshift(uint iNum) {
-    m_iCurCommas += iNum;
+    m_iPostDigits += iNum;
     normalize();
 }
 
@@ -219,7 +219,7 @@ void LongNum::unshift(uint iNum) {
 LongNum &LongNum::normalize() {
     
     uint iPre = 0;
-    while ((iPre < m_sDigits.length()) && (m_sDigits.at(iPre) == '0') && (iPre < m_iCurCommas) ) {
+    while ((iPre < m_sDigits.length()) && (m_sDigits.at(iPre) == '0') && (iPre < m_iPostDigits) ) {
         iPre++;
     }
     
@@ -230,11 +230,11 @@ LongNum &LongNum::normalize() {
 
     if (iPost < iPre) {
         m_sDigits    = "0";
-        m_iCurCommas = 0;
+        m_iPostDigits = 0;
         m_iSign      = 1;
     } else {
         m_sDigits =  m_sDigits.substr(iPre, iPost - iPre + 1);
-        m_iCurCommas -= iPre;
+        m_iPostDigits -= iPre;
     }
 
     return *this;
@@ -246,39 +246,39 @@ LongNum &LongNum::normalize() {
 LongNum LongNum::truncate(LongNum N) {
     std::string sDigits = std::string(N.m_sDigits.c_str());
 
-    uint iCommas = N.getCurCommas();
+    uint iPostDigits = N.getPostDigits();
     std::string s = "";
-    if (iCommas >= sDigits.length()) {
+    if (iPostDigits >= sDigits.length()) {
         s = "0";
     }
 
-    return LongNum(sDigits.substr(iCommas, std::string::npos)+s, 0, N.getBase(), 1);
+    return LongNum(sDigits.substr(iPostDigits, std::string::npos)+s, 0, N.getBase(), 1);
 }
 
 
 //----------------------------------------------------------------------------
 // makeCompatibleStrings
 //  use padding to make the strings have equal length and 
-//  equal number of post comma digits
+//  equal number of post decimal point digits
 // 
 uint LongNum::makeCompatibleStrings( LongNum &lN1,  LongNum &lN2, std::string &s1, std::string &s2) {
     s1 = lN1.getDigits();
     s2 = lN2.getDigits();
 
-    // ensure same number of digits after comma
-    if (lN2.getCurCommas() > lN1.getCurCommas()) {
-        zeropadBack(s1, lN2.getCurCommas() - lN1.getCurCommas());
-    } else if (lN1.getCurCommas() > lN2.getCurCommas()) { 
-        zeropadBack(s2, lN1.getCurCommas() - lN2.getCurCommas());
+    // ensure same number of digits after the decimal point
+    if (lN2.getPostDigits() > lN1.getPostDigits()) {
+        zeropadBack(s1, lN2.getPostDigits() - lN1.getPostDigits());
+    } else if (lN1.getPostDigits() > lN2.getPostDigits()) { 
+        zeropadBack(s2, lN1.getPostDigits() - lN2.getPostDigits());
     }
 
-    // ensure same number of digits before comma
+    // ensure same number of digits before the decimal point
     if (s1.length() < s2.length()) {
         zeropadFront(s1, s2.length()-s1.length());
     } else if (s2.length() < s1.length()) {
         zeropadFront(s2, s1.length()-s2.length());
     }
-    return ( lN1.getCurCommas() > lN2.getCurCommas())?lN1.getCurCommas():lN2.getCurCommas();
+    return ( lN1.getPostDigits() > lN2.getPostDigits())?lN1.getPostDigits():lN2.getPostDigits();
 }
 
 
@@ -289,8 +289,8 @@ uint LongNum::makeCompatibleStrings( LongNum &lN1,  LongNum &lN2, std::string &s
 LongNum LongNum::addNaturals(LongNum lN1, LongNum lN2)  {
     std::string s1;
     std::string s2;
-    uint iNewCommas = makeCompatibleStrings(lN1, lN2, s1, s2);
-    //    printf("add working with [%s] and [%s], commas: %u\n", s1.c_str(), s2.c_str(), m_iCurCommas);
+    uint iNewPostDigits = makeCompatibleStrings(lN1, lN2, s1, s2);
+    //    printf("add working with [%s] and [%s], post digits: %u\n", s1.c_str(), s2.c_str(), m_iPostDigits);
   
     std::string sResult = "";
     char cCarry = '0';
@@ -306,9 +306,9 @@ LongNum LongNum::addNaturals(LongNum lN1, LongNum lN2)  {
     if (cCarry != '0') {
         sResult += cCarry;
     }
-    //    printf("Result  [%s], commas: %u\n", sResult.c_str(), iNewCommas);
+    //    printf("Result  [%s], post digits: %u\n", sResult.c_str(), iNewPostDigits);
     
-    return LongNum(sResult, iNewCommas, lN1.getBase(), 1);
+    return LongNum(sResult, iNewPostDigits, lN1.getBase(), 1);
 }
 
 
@@ -343,7 +343,7 @@ LongNum LongNum::subNaturals(LongNum lN1, LongNum lN2) {
     
     std::string s1;
     std::string s2;
-    uint iNewCommas = makeCompatibleStrings(lN1, lN2, s1, s2);
+    uint iNewPostDigits = makeCompatibleStrings(lN1, lN2, s1, s2);
 
     bool bSwapped = false;
 
@@ -369,7 +369,7 @@ LongNum LongNum::subNaturals(LongNum lN1, LongNum lN2) {
         cCarry =  lN1.getOperationTables()->add(cr.carry,cr1.carry).value;
         //        printf("added %c to resut: %s, carry %c\n", cr.second, sResult.c_str(), cCarry);
     }
-    return LongNum(sResult,iNewCommas,lN1.getBase(), bSwapped?-1:1);
+    return LongNum(sResult,iNewPostDigits,lN1.getBase(), bSwapped?-1:1);
 }
 
 
@@ -404,9 +404,9 @@ LongNum LongNum::sub(LongNum lN)  {
 //
 LongNum LongNum::mulNaturals(LongNum lN1, LongNum lN2) {
     // because lN1 will be shifted, we must do this now
-    int iFinalCommas =  lN1.getCurCommas() + lN2.getCurCommas(); 
+    int iFinalPostDigits =  lN1.getPostDigits() + lN2.getPostDigits(); 
 
-    LongNum lNResult("", lN1.getCurCommas(), lN1.getBase(), lN1.isNegative()?-1:1);
+    LongNum lNResult("", lN1.getPostDigits(), lN1.getBase(), lN1.isNegative()?-1:1);
     std::string s2 = lN2.getDigits();
     for (uint i = 0; i < s2.length(); i++) {
         
@@ -415,7 +415,7 @@ LongNum LongNum::mulNaturals(LongNum lN1, LongNum lN2) {
         lNResult = lNResult.add(lNTemp);
         lN1.shift(1);
     } 
-    return LongNum(lNResult.getDigits(), iFinalCommas, lNResult.getBase(), lNResult.isNegative()?-1:1);
+    return LongNum(lNResult.getDigits(), iFinalPostDigits, lNResult.getBase(), lNResult.isNegative()?-1:1);
 }
 
 
@@ -438,7 +438,7 @@ LongNum LongNum::mulSingle(LongNum lN, char c) {
     if (cCarry != '0') {
         sResult += cCarry;
     }
-    return LongNum(sResult, lN.getCurCommas(), lN.getBase(), lN.isNegative()?-1:1);
+    return LongNum(sResult, lN.getPostDigits(), lN.getBase(), lN.isNegative()?-1:1);
 }
 
 
@@ -473,7 +473,7 @@ LongNum LongNum::mul(LongNum &lN) {
 //   larger than lN2; remove selected digits from s1
 //
 //
-std::string LongNum::collectLeadingDigits(std::string &sDigits, LongNum &lN2, uint *piPostCommas) {
+std::string LongNum::collectLeadingDigits(std::string &sDigits, LongNum &lN2, uint *piPostDigits) {
     LongNum lN2b(lN2.getDigits(), 0, lN2.getBase(), 1);
     
     uint iCount = sDigits.length()-1;
@@ -484,7 +484,7 @@ std::string LongNum::collectLeadingDigits(std::string &sDigits, LongNum &lN2, ui
             sTest = sDigits[iCount] + sTest;
         } else {
             sTest = "0" + sTest; // first 0? of yes: remember position
-            (*piPostCommas)++;
+            (*piPostDigits)++;
         }
         LongNum nTest = LongNum(sTest, 0, lN2.getBase(), 1);
         
@@ -558,9 +558,9 @@ LongNum LongNum::divNaturals(LongNum lN1, LongNum lN2, uint iPrecision) {
             // dividing zero always yields zero
             NResult = LongNum("0",lN1.getBase());
         } else {
-            // we shift bith numbers until there are no post comma digits
-            uint c1 = lN1.getCurCommas();
-            uint c2 = lN2.getCurCommas();
+            // we shift both numbers until there are no digits after the decimal point
+            uint c1 = lN1.getPostDigits();
+            uint c2 = lN2.getPostDigits();
             int iS = (c1 > c2)?c1:c2;
             int iShift = 0;
             if (c1 > 0) {
@@ -577,10 +577,10 @@ LongNum LongNum::divNaturals(LongNum lN1, LongNum lN2, uint iPrecision) {
             uint iP = 0;
             std::string s1 = lN1.getDigits();
             bool bDotSet = false;
-            uint iPostCommas = 0;
-            std::string sSelected = collectLeadingDigits(s1, lN2, &iPostCommas);
-            if (iPostCommas > 0) {
-                iPostCommas--;
+            uint iPostDigits = 0;
+            std::string sSelected = collectLeadingDigits(s1, lN2, &iPostDigits);
+            if (iPostDigits > 0) {
+                iPostDigits--;
                 bDotSet = true;
             }
       
@@ -592,7 +592,7 @@ LongNum LongNum::divNaturals(LongNum lN1, LongNum lN2, uint iPrecision) {
                 uchar u = simpleDiv(lNSelected, lN2, lNRest);
                           
                 if (bDotSet) {
-                    iPostCommas++;
+                    iPostDigits++;
                 }
                 sResult =  DigitOperationTables::getDigitSym(u) + sResult;
               
@@ -602,14 +602,15 @@ LongNum LongNum::divNaturals(LongNum lN1, LongNum lN2, uint iPrecision) {
             }
             if (!bDotSet) {
                 if (sSelected.empty()) {
-                    iPostCommas = sResult.length();
+                    iPostDigits = sResult.length();
                 }
             }
-            while (sResult.length() < iPostCommas) {
+            while (sResult.length() < iPostDigits) {
                 sResult = "0" + sResult;
             }
           
-            NResult = LongNum(sResult, iPostCommas/*+iShift*/, lN1.getBase(), lN1.isNegative()?-1:1);
+            NResult = LongNum(sResult, iPostDigits/*+iShift*/, lN1.getBase(), lN1.isNegative()?-1:1);
+            //??            NResult.unshift(iPostDigits-iShift);
         }
     }
     return NResult;
@@ -649,10 +650,10 @@ LongNum LongNum::div(LongNum &lN, uint iPrecision) {
 //  find the head of the number: first two digits if length is even,
 //  "0"+highest digit if length is odd
 //
-std::string LongNum::findHead(std::string &sDigits, uint iCurCommas,  bool *pbAfterDot) {
+std::string LongNum::findHead(std::string &sDigits, uint iPostDigits,  bool *pbAfterDot) {
     std::string s("");
     
-    if (((sDigits.length()-iCurCommas)%2) == 0) {
+    if (((sDigits.length()-iPostDigits)%2) == 0) {
         s = sDigits.substr(sDigits.length()-2, 2);
         sDigits = sDigits.substr(0, sDigits.length()-2);
     } else {
@@ -671,7 +672,7 @@ std::string LongNum::findHead(std::string &sDigits, uint iCurCommas,  bool *pbAf
 //
 std::string LongNum::getNextTwoDigits(std::string &sDigits, bool *pbAfterDot) {
     std::string s("");
-    // after the comma, here may be an odd number of digits!
+    // after the decimal point, there may be an odd number of digits!
     if (!sDigits.empty()) {
         if (sDigits.length() > 1) {
             s = sDigits.substr(sDigits.length()-2, 2);
@@ -721,10 +722,10 @@ LongNum LongNum::findLargestSubtractor(LongNum NRem, std::string &sResult, uint 
         // trial division to check: NRem/NTester is an upper limit for our q, because then q*(NTester+q) = NRem + (NRem/NTester)^2 >= NRem
         NQ = NRem.div(NTester, iPrecision);
         if ((N10 < NQ) || (N10 == NQ)) {
-            //printf("NQ is [%s, %d] >= 10, must set it to highest single digit\n", NQ.getDigits().c_str(), NQ.getCurCommas());
+            //printf("NQ is [%s, %d] >= 10, must set it to highest single digit\n", NQ.getDigits().c_str(), NQ.getPostDigits());
             NQ = N10 - one;
         }
-        // NQ should now be in [0, N10-1] (i.e. a single digit before the comma)
+        // NQ should now be in [0, N10-1] (i.e. a single digit before the decimal point)
 
         // NQ < N10 might not be an integer, therefore, we must truncate it
         NQ =  LongNum::truncate(NQ.normalize());
@@ -745,8 +746,8 @@ LongNum LongNum::findLargestSubtractor(LongNum NRem, std::string &sResult, uint 
 // sqrt
 //  using an algorithm for square roots
 //  I1. find leading pair cur of input digits D:
-//    I1a  if number of digits before the comma is even, use the frontmost 2 digits
-//    I1b  if number of digits before the comma is odd, use "0"+the frontmost digit
+//    I1a  if number of digits before the decimal point is even, use the frontmost 2 digits
+//    I1b  if number of digits before the decimal point is odd, use "0"+the frontmost digit
 //  I2. find integer square root sub of cur
 //  I3. first digit of result = sub
 //  L1. remainder cur = cur - sub
@@ -764,11 +765,11 @@ LongNum LongNum::findLargestSubtractor(LongNum NRem, std::string &sResult, uint 
 //
 LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
     std::string sResult("");
-    //printf("sqrt([%s], icomma[%u])\n", lN.getDigits().c_str(), lN.getCurCommas());
+    //printf("sqrt([%s], ipostdigits[%u])\n", lN.getDigits().c_str(), lN.getPostDigits());
     LongNum one("1", lN.getBase());
     LongNum zero("0", lN.getBase());
     bool bAfterDot = false;
-        int iCommas = 0;
+    int iPostDigits = 0;
     
     if (lN.isNegative()) {
         std::string sErr = "ERROR: can't take square root of negative number: ["+lN.toString()+"]";
@@ -784,14 +785,14 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
         // if we have numbers > 100, we have to shift by an even number of digits until <100
         while (!(lN < hun)) {
             iShifts--;
-            iCommas -= 2;
-            lN.m_iCurCommas +=2;
+            iPostDigits -= 2;
+            lN.m_iPostDigits +=2;
         }
         // if we have numbers < 1, we have to shift by an even number of digits until > 1
         while (lN < one) {
             lN.shift(2);
             iShifts++;
-            iCommas += 2;
+            iPostDigits += 2;
         }
         lN.normalize();
 
@@ -800,10 +801,10 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
 
         // find first (odd length) or first two digits (even length); 
         // make two-char string (zeropad on the right,  e.g. '7' -> "70")
-        std::string s1 = findHead(sDigits, lN.getCurCommas(), &bAfterDot);
+        std::string s1 = findHead(sDigits, lN.getPostDigits(), &bAfterDot);
        
         if (bAfterDot) {
-            iCommas++;
+            iPostDigits++;
         }
 
         // I2:
@@ -825,7 +826,7 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
             // L2:
             std::string s2 = getNextTwoDigits(sDigits, &bAfterDot);
             if (bAfterDot) {
-                iCommas++;
+                iPostDigits++;
             }
       
             // L3:
@@ -839,7 +840,7 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
             i++;
         }
         
-        iCommas = sResult.length() -1 +iShifts;
+        iPostDigits = sResult.length() -1 +iShifts;
     }
 
     //   subtract r from lN -> remainder x;
@@ -853,7 +854,7 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
     //        r = (q-1)*(tester+q-1)
     //   fi
     // done
-    return LongNum(sResult, iCommas, lN.getBase(), 1);
+    return LongNum(sResult, iPostDigits, lN.getBase(), 1);
 }
 
 
@@ -877,9 +878,9 @@ LongNum LongNum::changeBase(LongNum N, uchar toBase) {
  
     }
     
-    size_t n = snprintf(NULL, 0, "%d", N.getCurCommas());
+    size_t n = snprintf(NULL, 0, "%d", N.getPostDigits());
     char sBuf[n+1];
-    sprintf(sBuf, "%d", N.getCurCommas());
+    sprintf(sBuf, "%d", N.getPostDigits());
     LongNum NDivisor = LongNum::pow(NFromBase, LongNum(sBuf, 10));
     lNRes = lNRes.div(NDivisor, 20); 
     return LongNum(lNRes.normalize());
@@ -908,10 +909,10 @@ LongNum LongNum::round(LongNum lN, uint iPrecision) {
     LongNum lNRes(lN);
     std::string sDigits = lN.getDigits();
   
-    if (iPrecision < lN.getCurCommas()) {
+    if (iPrecision < lN.getPostDigits()) {
          
-        char c = sDigits.at(lN.getCurCommas()-iPrecision-1);
-        printf("char at %u: %c\n", lN.getCurCommas()-iPrecision-1, c);
+        char c = sDigits.at(lN.getPostDigits()-iPrecision-1);
+        printf("char at %u: %c\n", lN.getPostDigits()-iPrecision-1, c);
         uchar v = DigitOperationTables::getDigitVal(c);
         if (lN.getBase()/2 < v) {
             LongNum lNRounder("1", iPrecision, lN.getBase(), 1);
@@ -922,10 +923,10 @@ LongNum LongNum::round(LongNum lN, uint iPrecision) {
             sDigits = lNRes.getDigits();
         }
         // truncate to iPrecision 
-        sDigits = sDigits.substr(lN.getCurCommas() - iPrecision);
+        sDigits = sDigits.substr(lN.getPostDigits() - iPrecision);
     } else {
         // add 0s?
-        zeropadBack(sDigits, iPrecision -  lN.getCurCommas());
+        zeropadBack(sDigits, iPrecision -  lN.getPostDigits());
         
     }
     return LongNum(sDigits, iPrecision, lN.getBase(), 1);
@@ -938,13 +939,13 @@ LongNum LongNum::round(LongNum lN, uint iPrecision) {
 std::string LongNum::toString() {
     std::string sOut;
     std::string s0;
-    //    printf("m_iCurCommas: %u, digits.lem %zd\n", m_iCurCommas, m_sDigits.length());
-    if (m_iCurCommas >= m_sDigits.length()) {
-        zeropadFront(m_sDigits, m_iCurCommas-m_sDigits.length());
+    //    printf("m_iPostDigits: %u, digits.lem %zd\n", m_iPostDigits, m_sDigits.length());
+    if (m_iPostDigits >= m_sDigits.length()) {
+        zeropadFront(m_sDigits, m_iPostDigits-m_sDigits.length());
         s0 = "0.";
     }
     for (uint i = 0; i < m_sDigits.length(); i++) {
-        if ((i == m_iCurCommas) && (m_iCurCommas > 0)) {
+        if ((i == m_iPostDigits) && (m_iPostDigits > 0)) {
             sOut = "." + sOut;
         } 
         sOut = m_sDigits.at(i) + sOut;

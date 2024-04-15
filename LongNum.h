@@ -40,14 +40,14 @@ public:
 
     std::string toString();
     const std::string &getDigits() const { return m_sDigits;};
-    uint getCurCommas() const {return m_iCurCommas;};
-    void setCurCommas(uint iCurCommas) {m_iCurCommas=iCurCommas;};
+    uint getPostDigits() const {return m_iPostDigits;};
+    void setPostDigits(uint iPostDigits) {m_iPostDigits=iPostDigits;};
     bool isNegative() { return m_iSign < 0;}
     uchar getBase() {return m_iBase;};
     DigitOperationTables *getOperationTables() {return m_pDOT;};
 
     void negate(){m_iSign = -m_iSign;};
-    LongNum operator-() {return LongNum(m_sDigits, m_iCurCommas, m_pDOT->getBase(), -m_iSign);};
+    LongNum operator-() {return LongNum(m_sDigits, m_iPostDigits, m_pDOT->getBase(), -m_iSign);};
     bool operator<(LongNum lN);
     bool operator==(LongNum lN);
     LongNum operator+(LongNum lN) {return add(lN);};
@@ -70,17 +70,17 @@ protected:
 
     static LongNum mulSingle(LongNum lN, char c);
 
-    static std::string collectLeadingDigits(std::string &sDigits, LongNum &lN2, uint *piPostCommas);
+    static std::string collectLeadingDigits(std::string &sDigits, LongNum &lN2, uint *piPostDigits);
     static uchar simpleDiv(LongNum lN1, LongNum lN2, LongNum &lNRest);
     static std::string collectNextDigit(std::string &sDigits, LongNum lNRest, bool *pbDotSet);
 
-    static std::string findHead(std::string &sDigits, uint iCommas, bool *pbAfterDot);
+    static std::string findHead(std::string &sDigits, uint iPostDigits, bool *pbAfterDot);
     static std::string getNextTwoDigits(std::string &sDigits, bool *pbAfterDot);
     static LongNum findLargestSubtractor(LongNum NRem, std::string &sRes, uint iPrecision);
 
-    std::string            m_sDigits;
+    std::string            m_sDigits;      // the digits of the number
     char                   m_iSign;
-    uint                   m_iCurCommas;  // number of digits after comma
+    uint                   m_iPostDigits;  // number of digits after decimal point
 
     uchar                  m_iBase;
     DigitOperationTables  *m_pDOT;
