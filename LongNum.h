@@ -79,7 +79,7 @@ protected:
     static LongNum findLargestSubtractor(LongNum NRem, std::string &sRes, uint iPrecision);
 
     std::string            m_sDigits;      // the digits of the number
-    char                   m_iSign;
+    char                   m_iSign;        // the sign of the numbre (-1/+1)
     uint                   m_iPostDigits;  // number of digits after decimal point
 
     uchar                  m_iBase;
