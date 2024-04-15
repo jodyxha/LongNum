@@ -80,7 +80,7 @@ Note: this operation will have no carry, because at most one of the operands has
 **L6**:
     End loop
 
-**Post1**:
+**Post**:
     If there is a carry from the last loop iteration, then append it to the string.
 
 .. code-block:: c++ 
@@ -88,14 +88,6 @@ Note: this operation will have no carry, because at most one of the operands has
     if (cCarry != '0') {
         sResult += cCarry;
     }
-
-
-**Post2**:
-   Create a ``LongNum`` with the correct number of digits after the decimal point and return it
-
-.. code-block:: c++ 
-
-    return LongNum(sResult, iNewCommas, lN1.getBase(), 1);
 
 
 Regarding the potential carry values

@@ -4,16 +4,16 @@
    contain the root `toctree` directive.
 
 
-.. figure:: ../images/longnum_logo_4.png
+.. figure:: ../images/longnum_logo_0.png
 
 LongNum documentation!
 ======================
 
 .. toctree::
-   :maxdepth: 1
-   
-   longnum_intro
-   longnum_algorithms
+   :maxdepth: 2
+   :caption: Contents:
+
+
 
 Indices and tables
 ==================

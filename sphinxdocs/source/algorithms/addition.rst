@@ -20,7 +20,7 @@ The algorithm for the addition of two positive numbers (``LongNum`` objects) wit
  
     std::string s1;
     std::string s2;
-    uint iNewCommas = makeCompatibleStrings(lN1, lN2, s1, s2);
+    uint iNewDigits = makeCompatibleStrings(lN1, lN2, s1, s2);
 
 The position of the result's decimal point will be the larger of the decimal point positions of the two numbers.
 
@@ -80,7 +80,7 @@ Note: this operation will have no carry, because at most one of the operands has
 **L6**:
     End loop
 
-**Post**:
+**Post1**:
     If there is a carry from the last loop iteration, then append it to the string.
 
 .. code-block:: c++ 
@@ -88,6 +88,14 @@ Note: this operation will have no carry, because at most one of the operands has
     if (cCarry != '0') {
         sResult += cCarry;
     }
+
+
+**Post2**:
+   Create a ``LongNum`` with the correct number of digits after the decimal point and return it
+
+.. code-block:: c++ 
+
+    return LongNum(sResult, iNewDigits, lN1.getBase(), 1);
 
 
 Regarding the potential carry values

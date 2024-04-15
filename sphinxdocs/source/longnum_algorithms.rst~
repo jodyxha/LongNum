@@ -1,0 +1,10 @@
+
+The Algorithms
+==============
+
+The algorithms used in LongNum correspond to those traditionally 
+used in manual arithmetics, such as longhand addition, 
+longhand subtraction, longhand multiuplication and longhhaand division.
+In addition to that, there is also the implementation of a longhand square root.
+
+(cube root: https://wikihow.com/Calculate-Cube-Root-by-Hand)

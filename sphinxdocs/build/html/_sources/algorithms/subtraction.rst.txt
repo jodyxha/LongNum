@@ -20,7 +20,7 @@ The algorithm for the subtraction of two positive numbers (``LongNum`` objects) 
  
     std::string s1;
     std::string s2;
-    uint iNewPostDigits = makeCompatibleStrings(lN1, lN2, s1, s2);
+    uint iNewCommas = makeCompatibleStrings(lN1, lN2, s1, s2);
 
 The position of the result's decimal point will be the larger of the decimal point positions of the two numbers.
 
@@ -87,12 +87,3 @@ Note: the two carry values have at most the value 1, and only one of these two c
 
      cCarry =  lN1.getOperationTables()->add(cr.carry,cr1.carry).value;
 
-**L6**:
-    End loop.
-
-**Post**:
-   Create a ``LongNum`` with the correct number of digits after the decimal point and return it
-
-.. code-block:: c++ 
-
-    return LongNum(sResult, iNewPostDigits, lN1.getBase(), 1);

@@ -57,7 +57,7 @@ public:
     void showSqrtTable(sqrt_table t);
     void showConvTable(conv_table t);
 
-    //protected:
+protected:
     DigitOperationTables();
 
     int init(uchar iBase);

@@ -104,14 +104,14 @@ The algorithm for the multiplication of two positive numbers
 
 .. code-block:: c++ 
 
-    int iFinalDigits =  lN1.getPostDigits() + lN2.getPsorDigits(); 
+    int iFinalCommas =  lN1.getCurCommas() + lN2.getCurCommas(); 
 
 **I1**:
     Initialize a ``LongNum`` object without digits
 
 .. code-block:: c++ 
 
-     LongNum lNResult("", lN1.gePostDigits(), lN1.getBase(), lN1.isNegative()?-1:1);
+     LongNum lNResult("", lN1.getCurCommas(), lN1.getBase(), lN1.isNegative()?-1:1);
 
 **I2**:
     Get the digit string of the second operand.
@@ -152,4 +152,4 @@ The algorithm for the multiplication of two positive numbers
 
 .. code-block:: c++ 
 
-    return LongNum(lNResult.getDigits(), iFinalDigits, lNResult.getBase(), lNResult.isNegative()?-1:1);
+    return LongNum(lNResult.getDigits(), iFinalCommas, lNResult.getBase(), lNResult.isNegative()?-1:1);
