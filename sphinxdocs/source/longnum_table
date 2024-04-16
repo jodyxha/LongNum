@@ -1,0 +1,175 @@
+.. _operator_tables_ref:
+
+The Operator Tables
+===================
+
+For all longhand algorithms it is necessary to have knowledge of 
+the operations on single digits, for all bases..
+For this, the class ``DigitOperationTables`` defines lookup tables for all 
+basic operations except for division:
+
+  * :ref:`The Addition Table<add_table_ref>'
+  * :ref:`The Subtraction Table<sub_table_ref>`
+  * :ref:`The Multiplication Table<mul_table_ref>`
+  * :ref:`The Square  Root Table<sqrt_table_ref>`
+
+For division, there we use simple euclidean division during computation.
+
+Each table is a map of maps of structures holding the operation result 
+and the carry of the operation. All maps are by the digits (``char``).
+
+.. code-block:: c++
+
+    // data structure for elementary digit operation results
+    typedef struct {
+        char carry;
+        char value;
+    } cresult;
+
+    // look-up table: op_table[c1][c2] = (carry, (c1 op c2)% base)
+    typedef std::map<char, cresult>   op_table_row;
+    // look-up table: first operand => op_table_row
+    typedef std::map<char, op_table_row> op_table;
+
+
+For example, the addition table for base 3 would be:
+
+add['0']['0'] = ('0', '0')
+add['0']['1'] = ('0', '1')
+add['0']['2'] = ('0', '2')
+add['1']['0'] = ('0', '1')
+add['1']['1'] = ('0', '2')
+add['1']['2'] = ('1', '0')
+add['2']['0'] = ('0', '2')
+add['2']['1'] = ('1', '0')
+add['2']['2'] = ('1', '1')
+
+For square roots there is a look up for all two-digit numbers 
+returning the highest square lower than the given number.
+
+.. code-block:: c++
+
+    // lookup for elementary square roots 
+    typedef std::map<std::string, char>   sqrt_table;
+
+
+For example, the square root table for base 3 would be:
+
+sqrt['00'] = '0'
+sqrt['01'] = '1'
+sqrt['02'] = '1'
+sqrt['03'] = '1'
+sqrt['10'] = '2'
+sqrt['11'] = '2'
+sqrt['12'] = '2'
+sqrt['13'] = '2'
+sqrt['20'] = '2'
+sqrt['21'] = '3'
+sqrt['22'] = '3'
+sqrt['23'] = '3'
+sqrt['30'] = '3'
+sqrt['31'] = '3'
+sqrt['32'] = '3'
+sqrt['33'] = '3'
+
+The Digits
+----------
+
+The array ``dig_list`` serves as a look-up for digit symbols corresponding 
+to numbers. 
+
+.. code-block:: c++
+
+    static constexpr const char dig_list[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+We have limited the range of bases to be between 2 and 36 
+(numerals and lowercase alphabet) in order to have number representations 
+that don't look too odd, as oppposed to, for example, ``4$9a%?_3}!2``.
+
+
+.. _add_table_ref:
+
+The Addition Table
+------------------
+
+The elements of the addition tables are pairs of carry and addition results 
+indexed by digits.
+The array ``dig_list`` serves as a look-up for digit symbols corresponding 
+to numbers. We have limited the range of bases to be between 2 and 36 
+(numerals and lowercase alphabet) in order to have number representations 
+that don't look too odd, like for example ``4$9a%?_3}!2``.
+
+
+.. code-block:: c++
+
+    op_table m_addition;
+
+    for (uchar i = 0; i < iBase; i++) {
+        op_table_row tr_add;
+        for (uchar j = 0; j < iBase; j++) {
+            tr_add[dig_list[j]] = {dig_list[(i+j)/iBase], dig_list[(i+j)%iBase]};
+        }
+        m_addition[dig_list[i]]       = tr_add;
+    }
+
+So if ``c1`` and ``c2`` are two digits repreeneted in a particular base, and ``cr = m_addition[c1][c2]``,
+then ``cr.value`` is the digit representing the sum (modulo the base) of the values ``c1`` and ``c2`` represent, and
+``cr.carry`` is the symbol for the carry of the addition.
+
+
+.. _sub_table_ref:
+
+The Subtraction Table
+---------------------
+
+The elements of the subtraction tables are pairs of carry and subtraction 
+results indexed by digits.
+
+
+.. code-block:: c++
+
+    op_table m_subtraction;
+
+    for (uchar i = 0; i < iBase; i++) {
+        op_table_row tr_sub;
+        for (uchar j = 0; j < iBase; j++) {
+
+            if (j <= i) {
+                tr_sub[dig_list[j]] = {'0', dig_list[(i-j)]};
+            } else{
+                // we can't do (i-j)%iBase because '%' doesn't work well for negative dividends
+                tr_sub[dig_list[j]] = {'1', dig_list[(i+iBase-j)%iBase]};
+            }
+        }
+    }
+
+So if ``c1`` and ``c2`` are two digits repreeneted in a particular base, and ``cr = m_subtraction[c1][c2]``,
+then ``cr.value`` is the digit representing the difference (modulo the base) of the values ``c1`` and ``c2`` represent, and
+``cr.carry`` is the digit for the carry of the subtraction.
+
+
+.. _mul_table_ref:
+
+The Multiplication Table
+------------------------
+
+The elements of the multiplication tables are pairs of carry and multiplication 
+results indexed by digits. 
+
+.. code-block:: c++
+
+    op_table m_multiplication;
+
+    for (uchar i = 0; i < iBase; i++) {
+        op_table_row tr_mul;
+        for (uchar j = 0; j < iBase; j++) {
+            tr_mul[dig_list[j]] = {dig_list[(i*j)/m_iBase], dig_list[(i*j)%m_iBase]};
+        }
+        m_multiplication[dig_list[i]] = tr_mul;
+    }
+
+De gurgelu
+
+So if ``c1`` and ``c2`` are two digits repreeneted in a particular base, and ``cr = m_multiplications[c1][c2]``,
+then ``cr.value`` is the digit representing the product (modulo the base) of the values ``c1`` and ``c2`` represent, and
+``cr.carry`` is the digit for the carry of the multiplication.

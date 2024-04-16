@@ -55,7 +55,7 @@ The position of the result's decimal point will be the larger of the decimal poi
     char c2 = s2.at(i);
     
 **L2**:
-    Find the sum of the current carry and the digit ``c2`` from the :ref:`addition table<AddTable_ref>`, with a potential new carry.
+    Find the sum of the current carry and the digit ``c2`` from the :ref:`addition table<add_table_ref>`, with a potential new carry.
 
 .. code-block:: c++
 
@@ -64,7 +64,7 @@ The position of the result's decimal point will be the larger of the decimal poi
 The ``cresult`` object is a pair consisting of the difference of the two digits and the carry of this operation.
 
 **L3**:
-    Find the difference between ``c1`` and the previous result from the :ref:`subtraction table<SubTable_ref>`, with a potential carry.
+    Find the difference between ``c1`` and the previous result from the :ref:`subtraction table<sub_table_ref>`, with a potential carry.
 
 .. code-block:: c++
 

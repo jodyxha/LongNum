@@ -78,7 +78,7 @@ void help() {
     printf("\n");
     printf("other commands:\n");
     printf("setprec <prec>    set precision (i.e. number of digits)\n");
-    printf("setbase <prec>    set base (2 <= base < 36)\n");
+    printf("setbase <prec>    set base (2 <= base < %u)\n", DigitOperationTables::max_base);
     printf("show              display current precision, base and variable values\n");
     printf("exit              exit program\n");
     printf("\n");
@@ -98,14 +98,14 @@ int main(int iArgC, char *apArgV[]) {
     int iResult = 0;
     uchar iBase = 10;
     if (iArgC > 1) {
-        int iB = atoi(apArgV[1]);
-        if ((iB > 1) && (iB < 36)) {
+        uint iB = atoi(apArgV[1]);
+        if ((iB > 1) && (iB < DigitOperationTables::max_base)) {
             iBase = iB;
         } else {
             std::cout << "invalid base [" << apArgV[1]  << "] - ";
         }
     }
-    std::cout << "using base " << int(iBase) << "\n";
+    std::cout << "using base " << uint(iBase) << "\n";
     Evaluator *pEv = new Evaluator(iBase);
 
 
@@ -116,7 +116,7 @@ int main(int iArgC, char *apArgV[]) {
 
     do {
 
-        std::cout << "(" << int(iBase) << ")> ";
+        std::cout << "(" << uint(iBase) << ")> ";
         std::getline(std::cin, s);
       
         if (s == "exit") {
@@ -139,7 +139,7 @@ int main(int iArgC, char *apArgV[]) {
             size_t pos = s.find_first_of("0123456789");
             if (pos != std::string::npos) {
                 iBase = atoi(s.substr(pos).c_str());
-                if ((iBase > 1) && (iBase < 36)) {
+                if ((iBase > 1) && (iBase < DigitOperationTables::max_base)) {
                     pEv->setBase(iBase);
                 } else {
                     printf("Inavalid value for base:[%s]\n", s.substr(pos).c_str());

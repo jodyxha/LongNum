@@ -26,7 +26,7 @@ The position of the result's decimal point will be the larger of the decimal poi
 
 **I1**: 
     | Set the result ``sResult`` to the empty string
-    | Set the carry ``cCarry`` too the ``char`` '0'
+    | Set the carry ``cCarry`` to the ``char`` '0'
 
 .. code-block:: c++
 
@@ -44,7 +44,7 @@ The position of the result's decimal point will be the larger of the decimal poi
     char c1 = s1.at(i);
 
 **L2**: 
-    Find the sum of the current carry and the digit in s2 from the :ref:`addition table<AddTable_ref>`, with a potential new carry.
+    Find the sum of the current carry and the digit in s2 from the :ref:`addition table<add_table_ref>`, with a potential new carry.
     
 .. code-block:: c++
                 
@@ -53,7 +53,7 @@ The position of the result's decimal point will be the larger of the decimal poi
 The ``cresult`` object is a pair consisting of the sum of the digits anf the carry of this operation.
 
 **L3**: 
-    Find the sum of the previous result and the character at the current position in ``s2``, with a potential carry..,
+    Find the sum of the previous result and the character at the current position in ``s2``, with a potential carry.
 
 .. code-block:: c++ 
 

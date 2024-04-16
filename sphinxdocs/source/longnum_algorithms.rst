@@ -35,7 +35,4 @@ which make the operands positive but keeep track of the sign for the result.
 .. toctree::
    :maxdepth: 1
 
-   algorithms/add
-   algorithms/sub
-   algorithms/mul
-   algorithms/div
+   algorithms/op_arbitrary

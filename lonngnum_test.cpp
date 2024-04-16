@@ -6,11 +6,11 @@
 #include "LongNum.h"
 
 void showNumber(std::string sInput, LongNum &lN, uchar iBase) {
-    printf(" LongNum n1(\"%s\",%u): [%s](%d)\n", sInput.c_str(), iBase, lN.toString().c_str(), lN.getCurCommas());
+    printf(" LongNum n1(\"%s\",%u): [%s](%d)\n", sInput.c_str(), iBase, lN.toString().c_str(), lN.getPostDigits());
 }
 
 void showResult(LongNum lN1, LongNum lN2, LongNum lNRes, std::string sOp) {
-    printf(" LongNum [%s](%d) %s [%s](%d): [%s](%d)\n", lN1.normalize().toString().c_str(), lN1.getCurCommas(), sOp.c_str(), lN2.normalize().toString().c_str(), lN2.getCurCommas(), lNRes.normalize().toString().c_str(), lNRes.getCurCommas());
+    printf(" LongNum [%s](%d) %s [%s](%d): [%s](%d)\n", lN1.normalize().toString().c_str(), lN1.getPostDigits(), sOp.c_str(), lN2.normalize().toString().c_str(), lN2.getPostDigits(), lNRes.normalize().toString().c_str(), lNRes.getPostDigits());
 }
 
 
@@ -228,45 +228,45 @@ int main1(int iArgC, char *apArgV[]) {
     showNumber(u4, o4, iBase);
      
     printf("---- [%s] / [%s] ----\n", o1.toString().c_str(), o2.toString().c_str());
-    LongNum os = LongNum::divNaturals(o1, o2, iPrecision);
+    LongNum os = LongNum::divPositives(o1, o2, iPrecision);
     showResult(o1, o2, os, "/");
 
-    LongNum os1 = LongNum::mulNaturals(o2, os);
+    LongNum os1 = LongNum::mulPositives(o2, os);
     showResult(o2, os, os1, "*");
 
     printf("---- [%s] / [%s] ----\n", o2.toString().c_str(), o1.toString().c_str());
-    os = LongNum::divNaturals(o2, o1, iPrecision);
+    os = LongNum::divPositives(o2, o1, iPrecision);
     showResult(o2, o1, os, "/");
-    os1 = LongNum::mulNaturals(o1, os);
+    os1 = LongNum::mulPositives(o1, os);
     showResult(o1, os, os1, "*");
     printf("---- [%s] / [%s] ----\n", o1.toString().c_str(), o3.toString().c_str());
-    os = LongNum::divNaturals(o1, o3, iPrecision);
+    os = LongNum::divPositives(o1, o3, iPrecision);
     showResult(o1, o3, os, "/");
-    os1 = LongNum::mulNaturals(o3, os);
+    os1 = LongNum::mulPositives(o3, os);
     showResult(o3, os, os1, "*");
     printf("---- [%s] / [%s] ----\n", o1.toString().c_str(), o1.toString().c_str());
-    os = LongNum::divNaturals(o1, o1, iPrecision);
+    os = LongNum::divPositives(o1, o1, iPrecision);
     showResult(o1, o1, os, "/");
-    os1 = LongNum::mulNaturals(o1, os);
+    os1 = LongNum::mulPositives(o1, os);
     showResult(o1, os, os1, "*");
     
     printf("---- [%s] / [%s] ----\n", o4.toString().c_str(), o2.toString().c_str());
-    os = LongNum::divNaturals(o4, o2, iPrecision);
+    os = LongNum::divPositives(o4, o2, iPrecision);
     showResult(o4, o2, os, "/");
-    os1 = LongNum::mulNaturals(o2, os);
+    os1 = LongNum::mulPositives(o2, os);
     showResult(o2, os, os1, "*");
 
-    //    os1 = LongNum::divNaturals(o2, zero, iPrecision);
+    //    os1 = LongNum::divPositives(o2, zero, iPrecision);
     //    showResult(o2, zero, os1, "/");
 
-    os1 = LongNum::divNaturals(zero, o2, iPrecision);
+    os1 = LongNum::divPositives(zero, o2, iPrecision);
     showResult(zero, o2, os1, "/");
 
-    os1 = LongNum::divNaturals(one, o2, iPrecision);
+    os1 = LongNum::divPositives(one, o2, iPrecision);
     showResult(one, o2, os1, "/");
 
 
-    os1 = LongNum::divNaturals(one, one, iPrecision);
+    os1 = LongNum::divPositives(one, one, iPrecision);
     showResult(one, one, os1, "/");
 
     std::string uA("2613");
@@ -298,21 +298,21 @@ int main1(int iArgC, char *apArgV[]) {
     showNumber(uI, oI, iBase);
 
     
-    os1 = LongNum::divNaturals(one, oA, iPrecision);
+    os1 = LongNum::divPositives(one, oA, iPrecision);
     showResult(one, oA, os1, "/");
 
 
-    os1 = LongNum::divNaturals(oA, oA, iPrecision);
+    os1 = LongNum::divPositives(oA, oA, iPrecision);
     showResult(oA, oA, os1, "/");
 
-    os1 = LongNum::divNaturals(oB, oC, iPrecision);
+    os1 = LongNum::divPositives(oB, oC, iPrecision);
     showResult(oB, oC, os1, "/");
 
-    os1 = LongNum::divNaturals(oD, oA, iPrecision);
+    os1 = LongNum::divPositives(oD, oA, iPrecision);
     showResult(oD, oA, os1, "/");
 
 
-    os1 = LongNum::divNaturals(one, one, iPrecision);
+    os1 = LongNum::divPositives(one, one, iPrecision);
     showResult(one, one, os1, "/");
 
     double dTest1;
@@ -414,13 +414,13 @@ int main(int iArgC, char *apArgV[]) {
         M.normalize();
         X.normalize();
         * /
-        printf("N:%s (%s, %d, %d)\n", N.toString().c_str(), N.getDigits().c_str(), N.getCurCommas(), N.getSign());
+        printf("N:%s (%s, %d, %d)\n", N.toString().c_str(), N.getDigits().c_str(), N.getPostDigits(), N.getSign());
         N = LongNum::truncate(N);
-        printf("N:%s (%s, %d, %d)\n", N.toString().c_str(), N.getDigits().c_str(), N.getCurCommas(), N.getSign());
-        printf("M:%s (%s, %d, %d)\n", M.toString().c_str(), M.getDigits().c_str(), M.getCurCommas(), M.getSign());
+        printf("N:%s (%s, %d, %d)\n", N.toString().c_str(), N.getDigits().c_str(), N.getPostDigits(), N.getSign());
+        printf("M:%s (%s, %d, %d)\n", M.toString().c_str(), M.getDigits().c_str(), M.getPostDigits(), M.getSign());
         char q = N.normalize().getDigits().back();
         LongNum Q = LongNum(q, 10);
-        printf("Q:%s (%s, %d, %d)\n", Q.toString().c_str(), Q.getDigits().c_str(), Q.getCurCommas(), Q.getSign());
+        printf("Q:%s (%s, %d, %d)\n", Q.toString().c_str(), Q.getDigits().c_str(), Q.getPostDigits(), Q.getSign());
         
     }
     */
@@ -433,6 +433,7 @@ int main(int iArgC, char *apArgV[]) {
     //020 120 021 121 201 220 22
     */
 
+    /*
     for (uchar base = 2; base < 20; base++) {
         for (uint i = 0; i < 100; i++) {
             char s0[1024];
@@ -441,13 +442,13 @@ int main(int iArgC, char *apArgV[]) {
             s = LongNum::changeBase(s, base);
             LongNum r = LongNum::sqrt(s, 20);
             LongNum q = r*r;
-            printf("%s (%s,%d, %d): ", s.toString().c_str(), s.getDigits().c_str(), s.getCurCommas(), s.getBase());
-            printf("%s (%s,%d, %d): -> ", r.toString().c_str(), r.getDigits().c_str(), r.getCurCommas(), r.getBase());
-            printf("%s (%s,%d, %d)\n", q.toString().c_str(), q.getDigits().c_str(), q.getCurCommas(), q.getBase());
+            printf("%s (%s,%d, %d): ", s.toString().c_str(), s.getDigits().c_str(), s.getPostDigits(), s.getBase());
+            printf("%s (%s,%d, %d): -> ", r.toString().c_str(), r.getDigits().c_str(), r.getPostDigits(), r.getBase());
+            printf("%s (%s,%d, %d)\n", q.toString().c_str(), q.getDigits().c_str(), q.getPostDigits(), q.getBase());
             
         }
     }
-    
+    */
 
     /*
     
@@ -462,9 +463,30 @@ int main(int iArgC, char *apArgV[]) {
     printf("divisions:\n");
     pDOT->showTable(pDOT->m_division);
     LongNum r = LongNum::sqrt(s, 10);
-    printf("s: %s (%s,%d, %d)\n", s.toString().c_str(), s.getDigits().c_str(), s.getCurCommas(), s.getBase());
-    printf("r: %s (%s,%d, %d)\n", r.toString().c_str(), r.getDigits().c_str(), r.getCurCommas(), r.getBase());
+    printf("s: %s (%s,%d, %d)\n", s.toString().c_str(), s.getDigits().c_str(), s.getPostDigits(), s.getBase());
+    printf("r: %s (%s,%d, %d)\n", r.toString().c_str(), r.getDigits().c_str(), r.getPostDigits(), r.getBase());
     */  
+
+    LongNum nan("", 0, 10, 0);
+    printf("Nan: %s", nan.toString().c_str());
+    DigitOperationTables *pDOT = nan.getOperationTables();
+    
+    printf("additions:\n");
+    pDOT->show_table("add");
+    printf("subtractions:\n");
+    pDOT->show_table("sub");
+    printf("multiplications:\n");
+    pDOT->show_table("mul");
+    printf("divisions:\n");
+    pDOT->show_table("div");
+
+    pDOT->ascii_table("add");
+
+    pDOT->ascii_table("sub");
+
+    pDOT->ascii_table("mul");
+
+    pDOT->ascii_table("div");
 
     return 0;
 }

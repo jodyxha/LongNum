@@ -15,9 +15,9 @@ typedef struct {
 } cresult;
 
 // look-up table: op_table[c1][c2] = (carry, (c1 op c2)% base)
-typedef std::map<char, cresult>   table_row;
-// look-up table: first operand => table_row
-typedef std::map<char, table_row> table;
+typedef std::map<char, cresult>   op_table_row;
+// look-up table: first operand => op_table_row
+typedef std::map<char, op_table_row> op_table;
 
 
 // lookup for elementary square roots 
@@ -53,9 +53,12 @@ public:
     char    sqrt(const std::string s) { return m_sqrt[s];};
 
     std::string conv(const char num, const char base) { return m_conv[base][num];};
-    void showTable(table t);
+    void showTable(op_table t);
     void showSqrtTable(sqrt_table t);
     void showConvTable(conv_table t);
+
+    void show_table(std::string sTableName);
+    void ascii_table(std::string sTableName);
 
 protected:
     DigitOperationTables();
@@ -64,12 +67,18 @@ protected:
 
     uchar m_iBase;
     std::vector<char> m_vDigits;
-    table m_addition;
-    table m_subtraction;
-    table m_multiplication;
-    table m_division;
+    op_table m_addition;
+    op_table m_subtraction;
+    op_table m_multiplication;
+    op_table m_division;
     sqrt_table m_sqrt;
     conv_table m_conv;
+
+public:
+    // the printable digits limit the bases we can use (we could also add '$','&','&','?' etc, but this would look strange)
+    static constexpr const char dig_list[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+    // the maximum base we can representnumbers in, is 36 (=len(dig_list))
+    static const uint max_base = sizeof(dig_list)/sizeof(char);
 };
 
 

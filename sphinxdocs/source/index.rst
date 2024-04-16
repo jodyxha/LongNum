@@ -13,7 +13,9 @@ LongNum documentation!
    :maxdepth: 1
    
    longnum_intro
+   longnum_class
    longnum_algorithms
+   longnum_tables
 
 Indices and tables
 ==================

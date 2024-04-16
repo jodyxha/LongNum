@@ -283,10 +283,10 @@ uint LongNum::makeCompatibleStrings( LongNum &lN1,  LongNum &lN2, std::string &s
 
 
 //----------------------------------------------------------------------------
-// addNaturals
+// addPositives
 //  adding non-negative numbers
 //
-LongNum LongNum::addNaturals(LongNum lN1, LongNum lN2)  {
+LongNum LongNum::addPositives(LongNum lN1, LongNum lN2)  {
     std::string s1;
     std::string s2;
     uint iNewPostDigits = makeCompatibleStrings(lN1, lN2, s1, s2);
@@ -320,26 +320,26 @@ LongNum LongNum::add(LongNum lN)  {
     LongNum ns(lN.getBase());
     if (isNegative() && lN.isNegative()) {
         //    x + y = -((-x) + -y))
-        ns = -addNaturals(-*this, -lN);
+        ns = -addPositives(-*this, -lN);
     } else if  (!isNegative() && !lN.isNegative()) {
         //    x + y = x + y
-        ns = addNaturals(*this, lN);
+        ns = addPositives(*this, lN);
     } else if  (!isNegative() && lN.isNegative()) {
         //    x + y = x - (-y)
-        ns = subNaturals(*this, -lN);
+        ns = subPositives(*this, -lN);
     } else if  (isNegative() && !lN.isNegative()) {
         //    x + y = y - (-x)
-        ns = subNaturals(lN, -*this);
+        ns = subPositives(lN, -*this);
     }
     return LongNum(ns);
 }
 
 
 //----------------------------------------------------------------------------
-// subNaturals
+// subPositives
 //  subtract non-negative numbers
 //
-LongNum LongNum::subNaturals(LongNum lN1, LongNum lN2) {
+LongNum LongNum::subPositives(LongNum lN1, LongNum lN2) {
     
     std::string s1;
     std::string s2;
@@ -382,16 +382,16 @@ LongNum LongNum::sub(LongNum lN)  {
     
     if (isNegative() && lN.isNegative()) {
         //   x - y = (-y) - (-x)
-        ns = subNaturals(-lN, -*this);
+        ns = subPositives(-lN, -*this);
     } else if  (!isNegative() && !lN.isNegative()) {
         //   x - y- = x -y
-        ns = subNaturals(*this, lN);
+        ns = subPositives(*this, lN);
     } else if  (!isNegative() && lN.isNegative()) {
         //   x - y =  x + (-y)
-        ns = addNaturals(*this, -lN);
+        ns = addPositives(*this, -lN);
     } else if  (isNegative() && !lN.isNegative()) {
         //   x - y = (-x) + y
-        ns = -addNaturals(-*this, lN);
+        ns = -addPositives(-*this, lN);
     }
     
     return LongNum(ns);
@@ -399,10 +399,10 @@ LongNum LongNum::sub(LongNum lN)  {
 
 
 //----------------------------------------------------------------------------
-// mulNaturals
+// mulPositives
 //  multiply non-negative numbers
 //
-LongNum LongNum::mulNaturals(LongNum lN1, LongNum lN2) {
+LongNum LongNum::mulPositives(LongNum lN1, LongNum lN2) {
     // because lN1 will be shifted, we must do this now
     int iFinalPostDigits =  lN1.getPostDigits() + lN2.getPostDigits(); 
 
@@ -451,16 +451,16 @@ LongNum LongNum::mul(LongNum &lN) {
     
     if (isNegative() && lN.isNegative()) {
         //   x * y = (-x) * (-y)
-        ns = mulNaturals(-lN, -*this);
+        ns = mulPositives(-lN, -*this);
     } else if  (!isNegative() && !lN.isNegative()) {
         //   x * y = x * y
-        ns = mulNaturals(*this, lN);
+        ns = mulPositives(*this, lN);
     } else if  (!isNegative() && lN.isNegative()) {
         //   x * y = -(x * (-y))
-        ns = -mulNaturals(*this, -lN);
+        ns = -mulPositives(*this, -lN);
     } else if  (isNegative() && !lN.isNegative()) {
         //   x * y = -((-x) * y)
-        ns = -mulNaturals(-*this, lN);
+        ns = -mulPositives(-*this, lN);
     }
     
     return LongNum(ns);
@@ -544,9 +544,9 @@ uchar LongNum::simpleDiv(LongNum lN1, LongNum lN2, LongNum &lNRest) {
 
 
 //----------------------------------------------------------------------------
-// divNaturals
+// divPositives
 //
-LongNum LongNum::divNaturals(LongNum lN1, LongNum lN2, uint iPrecision) {
+LongNum LongNum::divPositives(LongNum lN1, LongNum lN2, uint iPrecision) {
     LongNum NResult(lN1.getBase());
     
 
@@ -628,16 +628,16 @@ LongNum LongNum::div(LongNum &lN, uint iPrecision) {
     } else {
         if (isNegative() && lN.isNegative()) {
             //   x / y = (-x) / (-y)
-            ns = divNaturals(-lN, -*this, iPrecision);
+            ns = divPositives(-lN, -*this, iPrecision);
         } else if  (!isNegative() && !lN.isNegative()) {
             //   x / y = x / y
-            ns = divNaturals(*this, lN, iPrecision);
+            ns = divPositives(*this, lN, iPrecision);
         } else if  (!isNegative() && lN.isNegative()) {
             //   x / y = -(x / (-y))
-            ns = -divNaturals(*this, -lN, iPrecision);
+            ns = -divPositives(*this, -lN, iPrecision);
         } else if  (isNegative() && !lN.isNegative()) {
             //   x / y = -((-x) / y)
-            ns = -divNaturals(-*this, lN, iPrecision);
+            ns = -divPositives(-*this, lN, iPrecision);
         }
     }
     return LongNum(ns);
@@ -646,9 +646,9 @@ LongNum LongNum::div(LongNum &lN, uint iPrecision) {
 
 //----------------------------------------------------------------------------
 // findHead
-//  sqrt-helper
-//  find the head of the number: first two digits if length is even,
-//  "0"+highest digit if length is odd
+//   sqrt-helper
+//   find the head of the number: first two digits if length is even,
+//   "0"+highest digit if length is odd
 //
 std::string LongNum::findHead(std::string &sDigits, uint iPostDigits,  bool *pbAfterDot) {
     std::string s("");
@@ -667,8 +667,8 @@ std::string LongNum::findHead(std::string &sDigits, uint iPostDigits,  bool *pbA
 
 //----------------------------------------------------------------------------
 // getNextTwoDigits
-//  sqrt-helper
-//  get the next two digit os sDigits, or "00" if empty
+//   sqrt-helper
+//   get the next two digit os sDigits, or "00" if empty
 //
 std::string LongNum::getNextTwoDigits(std::string &sDigits, bool *pbAfterDot) {
     std::string s("");
@@ -690,6 +690,7 @@ std::string LongNum::getNextTwoDigits(std::string &sDigits, bool *pbAfterDot) {
 
 //----------------------------------------------------------------------------
 // findLargestSubtractor
+//   sqrt-helper
 //   we have to find a value x such that x*(20*Res+x) is less or equal to NRem
 //
 LongNum LongNum::findLargestSubtractor(LongNum NRem, std::string &sResult, uint iPrecision) {

@@ -26,14 +26,18 @@ public:
     static uint makeCompatibleStrings( LongNum &lN1,  LongNum &lN2, std::string &s1, std::string &s2);
     void reset();
 
-    static LongNum addNaturals(LongNum lN1, LongNum lN2);
+    static LongNum addPositives(LongNum lN1, LongNum lN2);
     LongNum add(LongNum lN);
-    static LongNum subNaturals(LongNum lN1, LongNum lN2);
+
+    static LongNum subPositives(LongNum lN1, LongNum lN2);
     LongNum sub(LongNum lN);
-    static LongNum mulNaturals(LongNum lN1, LongNum lN2);
+
+    static LongNum mulPositives(LongNum lN1, LongNum lN2);
     LongNum mul(LongNum &lN);
-    static LongNum divNaturals(LongNum lN1, LongNum lN2, uint iPrecision);
+
+    static LongNum divPositives(LongNum lN1, LongNum lN2, uint iPrecision);
     LongNum div(LongNum &lN, uint iPrecision);
+
     static LongNum sqrt(LongNum lN, uint iPrecision);
     static LongNum pow(LongNum lN, LongNum lNPow);
     static LongNum round(LongNum lN, uint iPrecision);

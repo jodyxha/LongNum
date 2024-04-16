@@ -48,7 +48,7 @@ The algorithm for the multiplication of a positive number with a single-digit Nu
     char c1 = s1.at(i);
 
 **L2**: 
-    Find the product if the digits ``c1`` and `d`` s2 from the :ref:`multiplication table<MulTable_ref>`, with a potential new carry.
+    Find the product if the digits ``c1`` and `d`` s2 from the :ref:`multiplication table<mul_table_ref>`, with a potential new carry.
 
 .. code-block:: c++
 
@@ -57,7 +57,7 @@ The algorithm for the multiplication of a positive number with a single-digit Nu
 The ``cresult`` object is a pair consisting of the product of the digits and the carry of this operation.
 
 **L3**:
-     Find the sum of the previous result and the carry value, with a potential carry.
+     Find the sum of the previous result and the carry value, with a potential carry, using the :ref:`addition table<add_table_ref>`.
 
 
 .. code-block:: c++
