@@ -53,8 +53,12 @@ public:
 
     void negate(){m_iSign = -m_iSign;};
     LongNum operator-() {return LongNum(m_sDigits, m_iPostDigits, m_pDOT->getBase(), -m_iSign);};
-    bool operator<(LongNum lN);
     bool operator==(LongNum lN);
+    bool operator<(LongNum lN);
+    bool operator<=(LongNum lN);
+    bool operator>(LongNum lN);
+    bool operator>=(LongNum lN);
+
     LongNum operator+(LongNum lN) {return add(lN);};
     LongNum operator-(LongNum lN) {return sub(lN);};
     LongNum operator*(LongNum lN) {return mul(lN);};

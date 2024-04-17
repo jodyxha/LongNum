@@ -467,26 +467,39 @@ int main(int iArgC, char *apArgV[]) {
     printf("r: %s (%s,%d, %d)\n", r.toString().c_str(), r.getDigits().c_str(), r.getPostDigits(), r.getBase());
     */  
 
-    LongNum nan("", 0, 10, 0);
-    printf("Nan: %s", nan.toString().c_str());
-    DigitOperationTables *pDOT = nan.getOperationTables();
+    if (iArgC == 1) {
+
+        LongNum nan("", 0, 10, 0);
+        printf("Nan: %s", nan.toString().c_str());
+        DigitOperationTables *pDOT = nan.getOperationTables();
     
-    printf("additions:\n");
-    pDOT->show_table("add");
-    printf("subtractions:\n");
-    pDOT->show_table("sub");
-    printf("multiplications:\n");
-    pDOT->show_table("mul");
-    printf("divisions:\n");
-    pDOT->show_table("div");
+        printf("additions:\n");
+        pDOT->show_table("add");
+        printf("subtractions:\n");
+        pDOT->show_table("sub");
+        printf("multiplications:\n");
+        pDOT->show_table("mul");
+        printf("divisions:\n");
+        pDOT->show_table("div");
+        
+        pDOT->ascii_table("add");
+        
+        pDOT->ascii_table("sub");
+        
+        pDOT->ascii_table("mul");
+        
+        pDOT->ascii_table("div");
+    }
+    /*
+    if (iArgC > 2) {
+        LongNum lN1(apArgV[1], 10);
+        LongNum lN2(apArgV[2], 10);
 
-    pDOT->ascii_table("add");
+        printf("before: lN1 [%s], lN2 [%s]\n", lN1.toDebug().c_str(), lN2.toDebug().c_str());
+        LongNum nRes = LongNum::divPositives(lN1, lN2, 6);
+        printf("before: lN1 [%s], lN2 [%s], nRes[%s] (%s)\n", lN1.toDebug().c_str(), lN2.toDebug().c_str(), nRes.toDebug().c_str(),nRes.toString().c_str());
 
-    pDOT->ascii_table("sub");
-
-    pDOT->ascii_table("mul");
-
-    pDOT->ascii_table("div");
-
+    }
+    */
     return 0;
 }

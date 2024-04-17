@@ -38,6 +38,16 @@ bool LongNum::lessThan(LongNum lN1, LongNum lN2) {
 
 
 //----------------------------------------------------------------------------
+// operator==
+//
+bool LongNum::operator==(LongNum lN) { 
+    normalize();
+    lN.normalize();
+    return (m_sDigits == lN.getDigits()) && (m_iPostDigits == lN.getPostDigits()) && (isNegative() == lN.isNegative());
+}
+
+
+//----------------------------------------------------------------------------
 // operator<
 //
 bool LongNum::operator<(LongNum lN) {
@@ -56,16 +66,27 @@ bool LongNum::operator<(LongNum lN) {
     return bLessThan;
 }
 
-
 //----------------------------------------------------------------------------
-// operator==
+// operator<=
 //
-bool LongNum::operator==(LongNum lN) { 
-    normalize();
-    lN.normalize();
-    return (m_sDigits == lN.getDigits()) && (m_iPostDigits == lN.getPostDigits()) && (isNegative() == lN.isNegative());
+bool LongNum::operator<=(LongNum lN) {
+    bool bLessThan = operator<(lN);
+    return bLessThan | (*this == lN);
 }
 
+//----------------------------------------------------------------------------
+// operator>
+//
+bool LongNum::operator>(LongNum lN) {
+    return !operator<=(lN);
+}
+
+//----------------------------------------------------------------------------
+// operator>=
+//
+bool LongNum::operator>=(LongNum lN) {
+    return !operator<(lN);
+}
 
 //----------------------------------------------------------------------------
 // constructor
@@ -488,8 +509,8 @@ std::string LongNum::collectLeadingDigits(std::string &sDigits, LongNum &lN2, ui
         }
         LongNum nTest = LongNum(sTest, 0, lN2.getBase(), 1);
         
-        if ((lN2b < nTest) || (lN2b == nTest)) {
-            //printf("-> ok take previous\n");
+        if (nTest >= lN2b) {
+            //printf("-> ok; we're to large now, so take previous\n");
             iCount++;
             break;
         }
@@ -509,18 +530,18 @@ std::string LongNum::collectLeadingDigits(std::string &sDigits, LongNum &lN2, ui
 //----------------------------------------------------------------------------
 // collectNextDigit
 //
-std::string LongNum::collectNextDigit(std::string &sDigits, LongNum lNRest, bool *pbDotSet) {
+std::string LongNum::collectNextDigit(std::string &sDigits, LongNum lNRemainder, bool *pbDotSet) {
   
-    std::string sRest = lNRest.normalize().getDigits();
+    std::string sRemainder = lNRemainder.normalize().getDigits();
     if (sDigits.length() > 0) {
-        sRest =  sDigits.back() +  sRest;
+        sRemainder =  sDigits.back() +  sRemainder;
         sDigits = sDigits.substr(0, sDigits.length()-1);
     } else {
-        sRest =  "0" + sRest; // first 0? of yes: remember position
+        sRemainder =  "0" + sRemainder; // first 0? if yes: notify remember position
         *pbDotSet |= true;
     }
  
-    return sRest;
+    return sRemainder;
 }        
 
 
@@ -532,7 +553,7 @@ std::string LongNum::collectNextDigit(std::string &sDigits, LongNum lNRest, bool
 uchar LongNum::simpleDiv(LongNum lN1, LongNum lN2, LongNum &lNRest) {
     uchar iC = 0;
  
-    while ((lN2 < lN1) || (lN2 == lN1)) {
+    while ((lN2 <= lN1)) {
         lN1 = lN1 - lN2;
         iC++;
  
@@ -558,72 +579,55 @@ LongNum LongNum::divPositives(LongNum lN1, LongNum lN2, uint iPrecision) {
             // dividing zero always yields zero
             NResult = LongNum("0",lN1.getBase());
         } else {
-            printf("Have lN1:[%s], lN2:[%s]\n", lN1.toDebug().c_str(), lN2.toDebug().c_str());
-            // we shift both numbers until there are no digits after the decimal point
+            // we shift both numbers by the same amount such that there are no digits after the decimal point in bith numbers
             uint c1 = lN1.getPostDigits();
             uint c2 = lN2.getPostDigits();
-            int iS = (c1 > c2)?c1:c2;
-            
-            int iShift = 0;
-            if (c1 > 0) {
-                iShift = c1;
-            }
-            if (c2 > 0) {
-                iShift -= c2;
-            }
+            uint iS = (c1 > c2)?c1:c2;
             
             lN1.shift(iS);
             lN2.shift(iS);
-            printf("shifted nubers by %d\n", iS);
-            printf("Now lN1:[%s], lN2:[%s]\n", lN1.toDebug().c_str(), lN2.toDebug().c_str());
          
             std::string sResult = "";
-            uint iP = 0;
+            uint iDigCount = 0;
             std::string s1 = lN1.getDigits();
             bool bDotSet = false;
             uint iPostDigits = 0;
             std::string sSelected = collectLeadingDigits(s1, lN2, &iPostDigits);
-            printf("leaading digits [%s]; lN2 [%s], postdigits %u\n", sSelected.c_str(), lN2.toDebug().c_str(), iPostDigits);
 
+            // have we already used up all digits of s1?
             if (iPostDigits > 0) {
                 iPostDigits--;
                 bDotSet = true;
-                printf("iPostDigits A: %u\n", iPostDigits);
             }
       
-            while (iP < iPrecision) {
+            while (iDigCount < iPrecision) {
         
                 LongNum lNSelected(sSelected, 0, lN1.getBase(), 1);
-                LongNum lNRest(lN1.getBase());
+                LongNum lNRemainder(lN1.getBase());
                 
-                printf("sSelected [%s}; lN2 [%s]\n", sSelected.c_str(), lN2.toDebug().c_str());
                 // remove lN2 as often as possible from selected: count->result, rest->sSelected 
-                uchar u = simpleDiv(lNSelected, lN2, lNRest);
-                printf("div = %u, rest [%s}\n", u, lNRest.toDebug().c_str());
+                uchar u = simpleDiv(lNSelected, lN2, lNRemainder);
                           
                 if (bDotSet) {
                     iPostDigits++;
-                printf("iPostDigits B: %u\n", iPostDigits);
-                    
                 }
                 sResult =  DigitOperationTables::getDigitSym(u) + sResult;
               
-                sSelected = collectNextDigit(s1, lNRest, &bDotSet);
-                //??        s1 = s1 + lNRest.normalize().getDigits().c_str();
-                iP++;
+                sSelected = collectNextDigit(s1, lNRemainder, &bDotSet);
+
+                iDigCount++;
             }
             if (!bDotSet) {
                 if (sSelected.empty()) {
                     iPostDigits = sResult.length();
                 }
             }
-            printf("iPostDigits C: %u\n", iPostDigits);
+
             while (sResult.length() < iPostDigits) {
-                sResult = "0" + sResult;
+                sResult = sResult + "0";
             }
           
-            NResult = LongNum(sResult, iPostDigits/*+iShift*/, lN1.getBase(), lN1.isNegative()?-1:1);
-            //??           NResult.unshift(iPostDigits-iShift);
+            NResult = LongNum(sResult, iPostDigits, lN1.getBase(), lN1.isNegative()?-1:1);
         }
     }
     return NResult;
@@ -735,7 +739,7 @@ LongNum LongNum::findLargestSubtractor(LongNum NRem, std::string &sResult, uint 
     } else {
         // trial division to check: NRem/NTester is an upper limit for our q, because then q*(NTester+q) = NRem + (NRem/NTester)^2 >= NRem
         NQ = NRem.div(NTester, iPrecision);
-        if ((N10 < NQ) || (N10 == NQ)) {
+        if (NQ >= N10) {
             //printf("NQ is [%s, %d] >= 10, must set it to highest single digit\n", NQ.getDigits().c_str(), NQ.getPostDigits());
             NQ = N10 - one;
         }
