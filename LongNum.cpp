@@ -483,7 +483,7 @@ std::string LongNum::collectLeadingDigits(std::string &sDigits, LongNum &lN2, ui
         if (bInString) {
             sTest = sDigits[iCount] + sTest;
         } else {
-            sTest = "0" + sTest; // first 0? of yes: remember position
+            sTest = "0" + sTest; // first 0? if yes: remember position
             (*piPostDigits)++;
         }
         LongNum nTest = LongNum(sTest, 0, lN2.getBase(), 1);
@@ -558,10 +558,12 @@ LongNum LongNum::divPositives(LongNum lN1, LongNum lN2, uint iPrecision) {
             // dividing zero always yields zero
             NResult = LongNum("0",lN1.getBase());
         } else {
+            printf("Have lN1:[%s], lN2:[%s]\n", lN1.toDebug().c_str(), lN2.toDebug().c_str());
             // we shift both numbers until there are no digits after the decimal point
             uint c1 = lN1.getPostDigits();
             uint c2 = lN2.getPostDigits();
             int iS = (c1 > c2)?c1:c2;
+            
             int iShift = 0;
             if (c1 > 0) {
                 iShift = c1;
@@ -569,30 +571,40 @@ LongNum LongNum::divPositives(LongNum lN1, LongNum lN2, uint iPrecision) {
             if (c2 > 0) {
                 iShift -= c2;
             }
+            
             lN1.shift(iS);
             lN2.shift(iS);
-
-
+            printf("shifted nubers by %d\n", iS);
+            printf("Now lN1:[%s], lN2:[%s]\n", lN1.toDebug().c_str(), lN2.toDebug().c_str());
+         
             std::string sResult = "";
             uint iP = 0;
             std::string s1 = lN1.getDigits();
             bool bDotSet = false;
             uint iPostDigits = 0;
             std::string sSelected = collectLeadingDigits(s1, lN2, &iPostDigits);
+            printf("leaading digits [%s]; lN2 [%s], postdigits %u\n", sSelected.c_str(), lN2.toDebug().c_str(), iPostDigits);
+
             if (iPostDigits > 0) {
                 iPostDigits--;
                 bDotSet = true;
+                printf("iPostDigits A: %u\n", iPostDigits);
             }
       
             while (iP < iPrecision) {
         
                 LongNum lNSelected(sSelected, 0, lN1.getBase(), 1);
                 LongNum lNRest(lN1.getBase());
+                
+                printf("sSelected [%s}; lN2 [%s]\n", sSelected.c_str(), lN2.toDebug().c_str());
                 // remove lN2 as often as possible from selected: count->result, rest->sSelected 
                 uchar u = simpleDiv(lNSelected, lN2, lNRest);
+                printf("div = %u, rest [%s}\n", u, lNRest.toDebug().c_str());
                           
                 if (bDotSet) {
                     iPostDigits++;
+                printf("iPostDigits B: %u\n", iPostDigits);
+                    
                 }
                 sResult =  DigitOperationTables::getDigitSym(u) + sResult;
               
@@ -605,12 +617,13 @@ LongNum LongNum::divPositives(LongNum lN1, LongNum lN2, uint iPrecision) {
                     iPostDigits = sResult.length();
                 }
             }
+            printf("iPostDigits C: %u\n", iPostDigits);
             while (sResult.length() < iPostDigits) {
                 sResult = "0" + sResult;
             }
           
             NResult = LongNum(sResult, iPostDigits/*+iShift*/, lN1.getBase(), lN1.isNegative()?-1:1);
-            //??            NResult.unshift(iPostDigits-iShift);
+            //??           NResult.unshift(iPostDigits-iShift);
         }
     }
     return NResult;
@@ -960,3 +973,9 @@ std::string LongNum::toString() {
 }
             
 
+//----------------------------------------------------------------------------
+// toDebug
+//
+std::string LongNum::toDebug() {
+    return std::string("[" + m_sDigits + "]("+std::to_string(m_iPostDigits)+")");
+}

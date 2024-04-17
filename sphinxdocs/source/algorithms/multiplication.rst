@@ -124,7 +124,7 @@ The algorithm for the multiplication of two positive numbers
     Loop over the digits in ``s2``.
 
 **L1**:
-    Multiply the first operand with the current digit of the second operand (using the algorithm described above.
+    Multiply the first operand with the current digit of the second operand (using the algorithm described above).
 
 .. code-block:: c++ 
 

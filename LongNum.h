@@ -43,6 +43,7 @@ public:
     static LongNum round(LongNum lN, uint iPrecision);
 
     std::string toString();
+    std::string toDebug();
     const std::string &getDigits() const { return m_sDigits;};
     uint getPostDigits() const {return m_iPostDigits;};
     void setPostDigits(uint iPostDigits) {m_iPostDigits=iPostDigits;};
