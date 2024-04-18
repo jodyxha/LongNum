@@ -67,12 +67,21 @@ LongNum Evaluator::parsePrimary() {
     LongNum NRes("0", m_iBase);
     switch (m_pTS->current().kind) {
 
-    case kind_t::number:
+    case kind_t::number: {
         // number: just copy over number value
-
-        //        printf("parsePrimary doing number [%s]\n", m_pTS->current().numberValue.c_str());
-        NRes = LongNum(m_pTS->current().numberValue, m_iBase);
-        m_pTS->getNextToken();
+        std::string sNumber = m_pTS->current().numberValue;
+        // function in basemanager
+        bool bOK = BaseManager::checkBaseCompatibility(sNumber, m_iBase);
+        if (bOK) {
+            //        printf("parsePrimary doing number [%s]\n", m_pTS->current().numberValue.c_str());
+            NRes = LongNum(sNumber, m_iBase);
+            m_pTS->getNextToken();
+        } else {
+            char s[1024];
+            sprintf(s,  "nut a number in base %u: [%s]",  m_iBase, sNumber.c_str());
+            std::string sErr = s;
+            throw(sErr);
+        }}
         break;
 
     case kind_t::minus:
@@ -101,11 +110,11 @@ LongNum Evaluator::parsePrimary() {
         }
         break;
 
-    case kind_t::name: {
+    case kind_t::func: {
         // string expression: operator or variable
 
         std::string sName = m_pTS->current().stringValue;
-        if (sName == "sqrt") {
+        if (sName == "_sqrt") {
             // handle sqrt
             m_pTS->getNextToken();
             if (m_pTS->current().kind == kind_t::lparen) {
@@ -125,12 +134,12 @@ LongNum Evaluator::parsePrimary() {
                 std::string sErr = s;
                 throw(sErr);
             }
-        } else  if (sName == "round") {
+        } else  if (sName == "_round") {
             // handle round
             m_pTS->getNextToken();
             if (m_pTS->current().kind == kind_t::lparen) {
                 m_pTS->getNextToken();
-                NRes = LongNum::round(parseExpression(), m_iPrec);
+                NRes = LongNum::round(parseExpression(), 0 /*m_iPrec*/);
                 if  (m_pTS->current().kind == kind_t::rparen) {
                     m_pTS->getNextToken();
                 } else {
@@ -145,28 +154,55 @@ LongNum Evaluator::parsePrimary() {
                 std::string sErr = s;
                 throw(sErr);
             }
-            
-        } else {
-            // no reserved word, so try variable
-
-            varmap::iterator it = mVars.find(sName);
+        } else  if (sName == "_trunc") {
+            // handle trunc
             m_pTS->getNextToken();
-            if (m_pTS->current().kind == kind_t::assign) {
+            if (m_pTS->current().kind == kind_t::lparen) {
                 m_pTS->getNextToken();
-                LongNum v =  parseExpression();
-                mVars[sName] = v;
-                NRes = v;
-            } else {
-                if (it != mVars.end()) {
-                    NRes = it->second;
+                NRes = LongNum::truncate(parseExpression);
+                if  (m_pTS->current().kind == kind_t::rparen) {
+                    m_pTS->getNextToken();
                 } else {
                     char s[1024];
-                    sprintf(s,  "unknown variable [%s]",  sName.c_str());
+                    sprintf(s,  "expected ')' for 'trunc': [%s]", m_pTS->getString().c_str());
                     std::string sErr = s;
-                    throw(sErr);  
+                    throw(sErr);
                 }
+            } else {
+                char s[1024];
+                sprintf(s,  "expected '(' after 'trunc': [%s]", m_pTS->getString().c_str());
+                std::string sErr = s;
+                throw(sErr);
+            }
+
+        }
+        break;
+    }
+    case kind_t::name:{
+  
+        std::string sName = m_pTS->current().stringValue;
+        
+        varmap::iterator it = mVars.find(sName);
+        
+        m_pTS->getNextToken();
+        if (m_pTS->current().kind == kind_t::assign) {
+            // assignment: expect value
+            m_pTS->getNextToken();
+            LongNum v =  parseExpression();
+            mVars[sName] = v;
+            NRes = v;
+        } else {
+            if (it != mVars.end()) {
+                // variable value
+                NRes = it->second;
+            } else {
+                char s[1024];
+                sprintf(s,  "unknown variable [%s]",  sName.c_str());
+                std::string sErr = s;
+                throw(sErr);  
             }
         }
+    
         break;
     }
     default:

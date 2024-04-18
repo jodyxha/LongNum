@@ -11,6 +11,9 @@ public:
     static void         freeInstance();
 
     static DigitOperationTables    *getOperationTables(uchar m_iBase);
+
+    static bool checkBaseCompatibility(std::string sNumber, uchar iBase);
+
 protected:
 
     BaseManager();

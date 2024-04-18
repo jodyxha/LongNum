@@ -258,6 +258,11 @@ LongNum &LongNum::normalize() {
         m_iPostDigits -= iPre;
     }
 
+    if (m_iPostDigits > m_sDigits.length()) {
+        for (uint i = 0; i < m_iPostDigits - m_sDigits.length(); i++) {
+            m_sDigits = m_sDigits+"0";
+        }
+    }
     return *this;
 }
 
@@ -265,7 +270,7 @@ LongNum &LongNum::normalize() {
 // truncate
 //
 LongNum LongNum::truncate(LongNum N) {
-    std::string sDigits = std::string(N.m_sDigits.c_str());
+    std::string sDigits = std::string(N.normalize().m_sDigits.c_str());
 
     uint iPostDigits = N.getPostDigits();
     std::string s = "";

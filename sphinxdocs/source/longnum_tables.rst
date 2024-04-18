@@ -1,10 +1,10 @@
-.. _operator_tables_ref:
+.. _operation_tables_ref:
 
-The Operator Tables
-===================
+The Operation Tables
+====================
 
 For all longhand algorithms it is necessary to have knowledge of 
-the operations on single digits, for all bases..
+the arithmetic operations on single digits, for all bases..
 For this, the class ``DigitOperationTables`` defines lookup tables for all 
 basic operations except for division:
 

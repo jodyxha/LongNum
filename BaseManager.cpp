@@ -58,3 +58,10 @@ DigitOperationTables *BaseManager::getOperationTables(uchar iBase) {
     return pResult;
 }
 
+//----------------------------------------------------------------------------
+// checkBaseCompatibility
+//
+bool BaseManager::checkBaseCompatibility(std::string sNumber, uchar iBase) {
+    return DigitOperationTables::checkBaseCompatibility(sNumber, iBase);
+}
+

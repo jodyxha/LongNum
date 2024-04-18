@@ -10,7 +10,7 @@
 
 // the token flavors
 enum class kind_t: char {
-    none, name, number, end, error,
+    none, name, func, number, end, error,
     plus='+', minus='-', mul='*', div='/', assign='=', lparen='(', rparen=')', comma=','
 };
 
@@ -19,6 +19,7 @@ enum class kind_t: char {
 static std::map<kind_t, std::string> msNames = {
     {kind_t::none,   "none"},
     {kind_t::name,   "name"},
+    {kind_t::name,   "func"},
     {kind_t::number, "number"},
     {kind_t::end,    "end"},
     {kind_t::error,  "error"},

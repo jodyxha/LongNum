@@ -74,8 +74,14 @@ void help() {
     printf("'-'   subtraction\n");
     printf("'*'   multiplication\n");
     printf("'/'   division\n");
-    printf("sqrt  square-root function\n");
+    printf("_sqrt()  square-root function\n");
+    printf("_round() round to next integer\n");
+    printf("_trunc() truncate (remove fraction part of number)\n");
     printf("\n");
+    printf("Variable names must start with '$':");
+    printf("To set variable, use '=', e.g. $a3=417.87\n");
+    printf("To display variable, type its name\n");
+
     printf("other commands:\n");
     printf("setprec <prec>    set precision (i.e. number of digits)\n");
     printf("setbase <prec>    set base (2 <= base < %u)\n", DigitOperationTables::max_base);

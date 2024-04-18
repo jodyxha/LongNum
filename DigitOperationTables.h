@@ -60,6 +60,8 @@ public:
     void show_table(std::string sTableName);
     void ascii_table(std::string sTableName);
 
+    static bool checkBaseCompatibility(std::string sNumber, uchar iBase);
+
 protected:
     DigitOperationTables();
 

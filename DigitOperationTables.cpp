@@ -117,9 +117,18 @@ char DigitOperationTables::getDigitSym(uchar c) {
 //
 uchar DigitOperationTables::getDigitVal(char c) {
     uchar uVal = 0;
-    while ((uVal < strlen(dig_list)) && (c != dig_list[uVal])) {
-        uVal++;
+    bool bSearching = true;
+    while (bSearching && (uVal < strlen(dig_list))) {
+        if (c == dig_list[uVal]) {
+            bSearching = false;
+        } else {
+            uVal++;
+        }
     }
+    if (bSearching) {
+        uVal = 0xff;
+    }
+        
     return uVal;
 }
 
@@ -383,4 +392,22 @@ void DigitOperationTables::show_table(std::string sTableName) {
     if (pTable != NULL) {
         showTable(*pTable);
     }
+}
+
+//----------------------------------------------------------------------------
+// checkBaseCompatibility
+//
+bool DigitOperationTables::checkBaseCompatibility(std::string sNumber, uchar iBase) {
+    bool bOK = true;    
+
+    for (uint i = 0; bOK && (i < sNumber.length()); i++) {
+    char c = sNumber[i];
+    if (c != '.') {
+        uchar v = getDigitVal(c);
+        if (v >= iBase) {
+            bOK = false;
+        }
+    }
+}
+    return bOK;
 }

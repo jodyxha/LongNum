@@ -78,9 +78,36 @@ Token TokenScanner::getNextToken() {
     case '7':
     case '8':
     case '9':
-    case '.': 
+    case 'a':
+    case 'b':
+    case 'c':
+    case 'd':
+    case 'e':
+    case 'f':
+    case 'g':
+    case 'h':
+    case 'i':
+    case 'j':
+    case 'k':
+    case 'l':
+    case 'm':
+    case 'n':
+    case 'o':
+    case 'p':
+    case 'q':
+    case 'r':
+    case 's':
+    case 't':
+    case 'u':
+    case 'v':
+    case 'w':
+    case 'x':
+    case 'y':
+    case 'z':
+    case '.':
         m_curTok.numberValue = "";
-        while (isdigit(m_cCurChar) || (m_cCurChar == '.')) {
+        //while (isdigit(m_cCurChar) || (m_cCurChar == '.')) {
+        while (isalnum(m_cCurChar) || (m_cCurChar == '.')) {
             m_curTok.numberValue += m_cCurChar;
             getNextChar();
         }
@@ -88,12 +115,19 @@ Token TokenScanner::getNextToken() {
         break;
         
     default:
-        if (isalpha(m_cCurChar)) {
-            while (isalnum(m_cCurChar) || (m_cCurChar == '_')) {
+        //if (isalpha(m_cCurChar)) {
+        if (m_cCurChar == '$') {
+            while ((m_cCurChar == '$') || isalnum(m_cCurChar) || (m_cCurChar == '_')) {
                 m_curTok.stringValue += m_cCurChar;
                 getNextChar();
             }
             m_curTok.kind = kind_t::name;
+        } else if (m_cCurChar == '_') {
+            while ((m_cCurChar == '_') || isalnum(m_cCurChar)) {
+                m_curTok.stringValue += m_cCurChar;
+                getNextChar();
+            }
+            m_curTok.kind = kind_t::func;
         } else {
             m_curTok.kind = kind_t::error;
             m_curTok.stringValue = "Bad character: [";
