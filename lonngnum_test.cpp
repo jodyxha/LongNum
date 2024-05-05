@@ -396,7 +396,7 @@ int main1(int iArgC, char *apArgV[]) {
 
 
 
-int main(int iArgC, char *apArgV[]) {
+int main2(int iArgC, char *apArgV[]) {
 
     /*
     if (iArgC > 2) {
@@ -501,5 +501,20 @@ int main(int iArgC, char *apArgV[]) {
 
     }
     */
+    return 0;
+}
+
+
+int main(int iArgC, char *apArgV[]) {
+
+    if (iArgC > 2) {
+        std::string sDigits(apArgV[1]);
+        uint iComma = atoi(apArgV[2]);
+        LongNum lN = LongNum(sDigits, iComma, 10, 1);
+        lN.normalize();
+        printf("%s: %s\n", lN.toString().c_str(), lN.toDebug().c_str());
+    } else {
+        printf("%s <digits> <postdec>\n", apArgV[0]);
+    }
     return 0;
 }

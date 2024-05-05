@@ -2,8 +2,11 @@
 #define __LONGNUM_H__
 
 #include <string>
+#include <vector>
+
 #include "DigitOperationTables.h"
 
+typedef std::vector<std::string> stringvec;
 class BaseManager;
 
 class LongNum {
@@ -79,12 +82,15 @@ protected:
 
     static LongNum mulSingle(LongNum lN, char c);
 
-    static std::string collectLeadingDigits(std::string &sDigits, LongNum &lN2, uint *piPostDigits);
+    static std::string getFirstDigits(std::string &sDigits, LongNum &lN2, uint *piPostDigits);
+    static std::string getNextDigit(std::string &sDigits, LongNum lNRest, bool *pbDotSet);
     static uchar simpleDiv(LongNum lN1, LongNum lN2, LongNum &lNRest);
-    static std::string collectNextDigit(std::string &sDigits, LongNum lNRest, bool *pbDotSet);
 
-    static std::string findHead(std::string &sDigits, uint iPostDigits, bool *pbAfterDot);
-    static std::string getNextTwoDigits(std::string &sDigits, bool *pbAfterDot);
+    static std::string getFirstPair(std::string &sDigits, uint iPostDigits, bool *pbAfterDot);
+    static std::string getNextPair(std::string &sDigits, bool *pbAfterDot);
+    
+    static stringvec splitToPairs(std::string &sDigits, uint iPostDigits);
+
     static LongNum findLargestSubtractor(LongNum NRem, std::string &sRes, uint iPrecision);
 
     std::string            m_sDigits;      // the digits of the number

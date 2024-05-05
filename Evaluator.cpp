@@ -159,7 +159,7 @@ LongNum Evaluator::parsePrimary() {
             m_pTS->getNextToken();
             if (m_pTS->current().kind == kind_t::lparen) {
                 m_pTS->getNextToken();
-                NRes = LongNum::truncate(parseExpression);
+                NRes = LongNum::truncate(parseExpression());
                 if  (m_pTS->current().kind == kind_t::rparen) {
                     m_pTS->getNextToken();
                 } else {

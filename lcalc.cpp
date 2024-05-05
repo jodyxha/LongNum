@@ -82,9 +82,13 @@ void help() {
     printf("To set variable, use '=', e.g. $a3=417.87\n");
     printf("To display variable, type its name\n");
 
+    printf("If you place a '!' in the fromt of an expression,\n");
+    printf("the result will be followed by its internal representation (digits, number of postcomma digits, sign)\n");
+
     printf("other commands:\n");
     printf("setprec <prec>    set precision (i.e. number of digits)\n");
     printf("setbase <prec>    set base (2 <= base < %u)\n", DigitOperationTables::max_base);
+    printf("                  (the currently used base is part of the input prompt)\n");
     printf("show              display current precision, base and variable values\n");
     printf("exit              exit program\n");
     printf("\n");
@@ -124,7 +128,8 @@ int main(int iArgC, char *apArgV[]) {
 
         std::cout << "(" << uint(iBase) << ")> ";
         std::getline(std::cin, s);
-      
+        s.erase(0, s.find_first_not_of(' '));  
+
         if (s == "exit") {
             bGoOn = false;
         } else if (s == "show") {
@@ -160,9 +165,18 @@ int main(int iArgC, char *apArgV[]) {
         } else { 
             //printf("s:[%s](%zd), trim(s):[%s](%zd)\n", s.c_str(),s.length(), trim(s).c_str(), trim(s).length());
             if (trim(s).length() > 0) {
+                bool bDebug = false;
+                if (s[0] == '!') {
+                    s = s.substr(1);
+                    bDebug = true;
+                }
                 try{
                     LongNum res = pEv->processString(s);
-                    std::cout << res.normalize().toString() << "\n";
+                    std::cout << res.normalize().toString();
+                    if (bDebug) {
+                        std::cout << " : " + res.toDebug();
+                    }
+                    std::cout << "\n";
                 } catch  (std::string sErr) {
                     printf("Eception: [%s]\n", sErr.c_str());
                     

@@ -12,20 +12,55 @@ Square Root
 Algorithm Details
 -----------------
 
-We accompany the  algorithm description with a numeric example_
+
+We accompany the  algorithm description with a numeric example
+
+.. code-block:: txt
+
+   54328.179
 
 .. figure:: ../../images/sqrt_init_00.png
 
-The first step is to make digits group starting at the decimal point and moving towards the most significant digit, and from the decimal towards the least significant digit.
+**Initialisation phase**
+
+1. | The first step is to make digits group starting at the decimal point and moving towards the most significant digit, and from the decimal towards the least significant digit.
+   | The highest group can contain one digit (you may prepend a 0 to wmate it a proper 2-digit group, but this does not matter to the algorithm).
+   | Let P be the number represented by the highest group.
 
 .. figure:: ../../images/sqrt_init_01.png
 
-The highest group can contain one digit (you may prepend a 0 to wmate it a proper 2-digit group, but this does not matter to the algorithm).
+.. code-block:: txt
 
-Now find the highest one-digit number *s* whose square is lee than the number represented by the leading two digits.
-The digit *s* is the first digit of the solution.
+   05|43|28.17|90    233.08405
+   04                               2*2 = 4
+   __
+    1 43             
+    1 29                           43*3 = 129
+    ___  
+      14 28
+      13 89                       463*3 = 1'389
+      _____
+         39 17
+             0                   4660*0 = 0
+         _____
+         39 17 90  
+         37 28 64               46608*8 = 372'864
+         ________
+          1 89 26 00 
+          1 86 46 56           466164*4 = 1'864'656
+          __________
+             2 79 44 00
+                      0       4661680*0 = 0
+             __________
+             2 79 44 00 00
+             2 33 08 40 25   46616805*5 = 233084025
+             -------------
+               46 35 59 75
 
-Now subtract *s*\ :sup:`2` from the leading group yielding a number *r*.
+2. | Now find the highest one-digit number *s* whose square is less than *P*-
+   | The digit *s* is the first digit of the solution.
+
+3. | Subtract *s*\ :sup:`2` from the leading group yielding a number *r*: *r* = *P* -  *s*\ :sup:`2`.
 
 Here follows a loop which produces an additional digit of the solution in each iteration.
 

@@ -5,14 +5,16 @@ Division
 
 .. rst-class:: hidden
 
-   This page describes the :index:`DivisiionSubtraction` algorithm
+   This page describes the :index:`Division` algorithm
 
-For the multiplication of to positive numbers, we use some helper functions for the algorithm:
+For the multiplication of to positive numbers, we use some helper functions 
+to actually implement the division of to arbitrary positive numbersx:
 
   * :ref:`collecting leading digits of the dividend <div_collect_leading_ref>`
-  * :ref:`getting the mext digit of the dividend <div_get_next_ref>`
+  * :ref:`getting the next digit of the dividend <div_get_next_ref>`
   * :ref:`division by repeated subtraction <div_by_sub_ref>`
   * :ref:`division by repeated subtraction <div_by_sub_ref>`
+
   * :ref:`dividing two positive numbers <div_pos_ref>`
 
 .. _div_get_next_ref:

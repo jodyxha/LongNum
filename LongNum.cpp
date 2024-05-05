@@ -239,30 +239,31 @@ void LongNum::unshift(uint iNum) {
 //
 LongNum &LongNum::normalize() {
     
-    uint iPre = 0;
-    while ((iPre < m_sDigits.length()) && (m_sDigits.at(iPre) == '0') && (iPre < m_iPostDigits) ) {
-        iPre++;
+    // find first nonzero digit starting from the least significant digit, but before reaching the decimal point
+    uint iLSD = 0;
+    while ((iLSD < m_sDigits.length()) && (m_sDigits.at(iLSD) == '0') && (iLSD < m_iPostDigits) ) {
+        iLSD++;
     }
     
-    uint iPost = m_sDigits.length()-1;
-    while ((iPost > iPre) && (m_sDigits.at(iPost) == '0')) {
-        iPost--;
+    uint iMSD = m_sDigits.length()-1;
+    while ((iMSD > iLSD) && (m_sDigits.at(iMSD) == '0')) {
+        iMSD--;
     }
-
-    if (iPost < iPre) {
+ 
+    if (iMSD < iLSD) {
         m_sDigits    = "0";
         m_iPostDigits = 0;
         m_iSign      = 1;
     } else {
-        m_sDigits =  m_sDigits.substr(iPre, iPost - iPre + 1);
-        m_iPostDigits -= iPre;
+        m_sDigits =  m_sDigits.substr(iLSD, iMSD - iLSD + 1);
+        m_iPostDigits -= iLSD;
     }
 
-    if (m_iPostDigits > m_sDigits.length()) {
-        for (uint i = 0; i < m_iPostDigits - m_sDigits.length(); i++) {
-            m_sDigits = m_sDigits+"0";
-        }
+    // make sure there are enough leading digits to represent a 
+    while (m_iPostDigits > m_sDigits.length()) {
+        m_sDigits = m_sDigits+"0";
     }
+
     return *this;
 }
 
@@ -494,12 +495,12 @@ LongNum LongNum::mul(LongNum &lN) {
 
 
 //----------------------------------------------------------------------------
-// collectLeadingDigits
+// getFirstDigits
 //   collect leading digits from sDigits into sTest, until value(sTest) is
 //   larger than lN2; remove selected digits from s1
 //
 //
-std::string LongNum::collectLeadingDigits(std::string &sDigits, LongNum &lN2, uint *piPostDigits) {
+std::string LongNum::getFirstDigits(std::string &sDigits, LongNum &lN2, uint *piPostDigits) {
     LongNum lN2b(lN2.getDigits(), 0, lN2.getBase(), 1);
     
     uint iCount = sDigits.length()-1;
@@ -533,9 +534,9 @@ std::string LongNum::collectLeadingDigits(std::string &sDigits, LongNum &lN2, ui
 
 
 //----------------------------------------------------------------------------
-// collectNextDigit
+// getNextDigit
 //
-std::string LongNum::collectNextDigit(std::string &sDigits, LongNum lNRemainder, bool *pbDotSet) {
+std::string LongNum::getNextDigit(std::string &sDigits, LongNum lNRemainder, bool *pbDotSet) {
   
     std::string sRemainder = lNRemainder.normalize().getDigits();
     if (sDigits.length() > 0) {
@@ -597,7 +598,9 @@ LongNum LongNum::divPositives(LongNum lN1, LongNum lN2, uint iPrecision) {
             std::string s1 = lN1.getDigits();
             bool bDotSet = false;
             uint iPostDigits = 0;
-            std::string sSelected = collectLeadingDigits(s1, lN2, &iPostDigits);
+
+            // this will modify s1, lN2, iPostDigits
+            std::string sSelected = getFirstDigits(s1, lN2, &iPostDigits);
 
             // have we already used up all digits of s1?
             if (iPostDigits > 0) {
@@ -618,7 +621,7 @@ LongNum LongNum::divPositives(LongNum lN1, LongNum lN2, uint iPrecision) {
                 }
                 sResult =  DigitOperationTables::getDigitSym(u) + sResult;
               
-                sSelected = collectNextDigit(s1, lNRemainder, &bDotSet);
+                sSelected = getNextDigit(s1, lNRemainder, &bDotSet);
 
                 iDigCount++;
             }
@@ -667,18 +670,20 @@ LongNum LongNum::div(LongNum &lN, uint iPrecision) {
 
 
 //----------------------------------------------------------------------------
-// findHead
+// getLeadingPair
 //   sqrt-helper
 //   find the head of the number: first two digits if length is even,
 //   "0"+highest digit if length is odd
+//   at exit the length of sDigits is even
 //
-std::string LongNum::findHead(std::string &sDigits, uint iPostDigits,  bool *pbAfterDot) {
+std::string LongNum::getFirstPair(std::string &sDigits, uint iPostDigits,  bool *pbAfterDot) {
     std::string s("");
     
     if (((sDigits.length()-iPostDigits)%2) == 0) {
         s = sDigits.substr(sDigits.length()-2, 2);
         sDigits = sDigits.substr(0, sDigits.length()-2);
     } else {
+        // prepend a '0` in front of the most significant digit
         s = sDigits.substr(sDigits.length()-1, 1)+"0";
         sDigits = sDigits.substr(0, sDigits.length()-1);
     
@@ -688,11 +693,12 @@ std::string LongNum::findHead(std::string &sDigits, uint iPostDigits,  bool *pbA
 
 
 //----------------------------------------------------------------------------
-// getNextTwoDigits
+// getNextPair
 //   sqrt-helper
-//   get the next two digit os sDigits, or "00" if empty
+//   get the next two digit of sDigits, or "00" if empty
+//   (assumption: length of sDigits is even)
 //
-std::string LongNum::getNextTwoDigits(std::string &sDigits, bool *pbAfterDot) {
+std::string LongNum::getNextPair(std::string &sDigits, bool *pbAfterDot) {
     std::string s("");
     // after the decimal point, there may be an odd number of digits!
     if (!sDigits.empty()) {
@@ -700,10 +706,12 @@ std::string LongNum::getNextTwoDigits(std::string &sDigits, bool *pbAfterDot) {
             s = sDigits.substr(sDigits.length()-2, 2);
             sDigits = sDigits.substr(0, sDigits.length()-2);
         } else {
+            // append a '0' after the least significant digit
             s = "0"+sDigits.substr(sDigits.length()-1, 1);
             sDigits = sDigits.substr(0, sDigits.length()-1);
         }
     } else {
+        // no more digits: use "00"
         s = "00";
         (*pbAfterDot) |= true;
     }
@@ -742,8 +750,11 @@ LongNum LongNum::findLargestSubtractor(LongNum NRem, std::string &sResult, uint 
         NQ   = zero;
         NSub = zero;
     } else {
-        // trial division to check: NRem/NTester is an upper limit for our q, because then q*(NTester+q) = NRem + (NRem/NTester)^2 >= NRem
+        // NRem/NTester is an upper limit for our q, because then 
+        // q*(NTester+q) = NRem + (NRem/NTester)^2 >= NRem
         NQ = NRem.div(NTester, iPrecision);
+
+        // we only need a single digit, so if the value is greater than 10 (i.e. base), then use b-1
         if (NQ >= N10) {
             //printf("NQ is [%s, %d] >= 10, must set it to highest single digit\n", NQ.getDigits().c_str(), NQ.getPostDigits());
             NQ = N10 - one;
@@ -805,6 +816,7 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
         //printf("--- calculating sqrt(%s) ---\n", lN.toString().c_str());
         LongNum hun("100", lN.getBase());
         int iShifts = 0;
+        
         // if we have numbers > 100, we have to shift by an even number of digits until <100
         while (!(lN < hun)) {
             iShifts--;
@@ -817,6 +829,7 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
             iShifts++;
             iPostDigits += 2;
         }
+        
         lN.normalize();
 
         // I1:
@@ -824,7 +837,7 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
 
         // find first (odd length) or first two digits (even length); 
         // make two-char string (zeropad on the right,  e.g. '7' -> "70")
-        std::string s1 = findHead(sDigits, lN.getPostDigits(), &bAfterDot);
+        std::string s1 = getFirstPair(sDigits, lN.getPostDigits(), &bAfterDot);
        
         if (bAfterDot) {
             iPostDigits++;
@@ -847,7 +860,7 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
             NRem = NRem - NSub;
   
             // L2:
-            std::string s2 = getNextTwoDigits(sDigits, &bAfterDot);
+            std::string s2 = getNextPair(sDigits, &bAfterDot);
             if (bAfterDot) {
                 iPostDigits++;
             }
@@ -859,11 +872,12 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
             
             // L4 - L7
             NSub = findLargestSubtractor(NRem, sResult, iPrecision);
-           
+            
+            printf("Rem %s, sub %s\n", NRem.toString().c_str(), NSub.toString().c_str());
             i++;
         }
         
-        iPostDigits = sResult.length() -1 +iShifts;
+        iPostDigits = sResult.length() - 1 + iShifts;
     }
 
     //   subtract r from lN -> remainder x;
@@ -986,5 +1000,5 @@ std::string LongNum::toString() {
 // toDebug
 //
 std::string LongNum::toDebug() {
-    return std::string("[" + m_sDigits + "]("+std::to_string(m_iPostDigits)+")");
+    return std::string("[" + m_sDigits + "]("+std::to_string(m_iPostDigits)+", " + ((m_iSign>0)?"+":"-") + ")");
 }
