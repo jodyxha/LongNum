@@ -10,24 +10,66 @@ Division
 For the multiplication of to positive numbers, we use some helper functions 
 to actually implement the division of to arbitrary positive numbersx:
 
-  * :ref:`collecting leading digits of the dividend <div_collect_leading_ref>`
-  * :ref:`getting the next digit of the dividend <div_get_next_ref>`
-  * :ref:`division by repeated subtraction <div_by_sub_ref>`
+  * :ref:`collecting leading digits of the dividend <div_get_first_digits_ref>`
+  * :ref:`getting the next digit of the dividend <div_get_next_digit_ref>`
   * :ref:`division by repeated subtraction <div_by_sub_ref>`
 
   * :ref:`dividing two positive numbers <div_pos_ref>`
 
-.. _div_get_next_ref:
+.. _div_get_first_digits_ref:
 
-Getting the next digit from the dividend
-----------------------------------------
+Getting the first digits from the dividend
+------------------------------------------
 
-Get the next digit from the dividend and add it after the least significant digit of ``lNRemainder``\ 's digits.
-If there are no more digits, use a '0'.
+We must collect the minimum amount of digits from the MSD so the resulting number is greater then the divisor.
 
 .. code-block:: c++
 
-    std::string LongNum::collectNextDigit(std::string &sDigits, LongNum lNRemainder, bool *pbDotSet) {
+    std::string LongNum::getFirstDigits(std::string &sDigits, LongNum &lN2, uint *piPostDigits) {
+        LongNum lN2b(lN2.getDigits(), 0, lN2.getBase(), 1);
+        
+        uint iCount = sDigits.length()-1;
+        std::string sTest("");
+        bool bInString = (!sDigits.empty());
+        while(true) {
+            if (bInString) {
+                sTest = sDigits[iCount] + sTest;
+            } else {
+                sTest = "0" + sTest; // first 0? if yes: remember position
+                (*piPostDigits)++;
+            }
+            LongNum nTest = LongNum(sTest, 0, lN2.getBase(), 1);
+            
+            if (nTest >= lN2b) {
+                //printf("-> ok; we're to large now, so take previous\n");
+                iCount++;
+                break;
+            }
+            if (iCount > 0) {
+                iCount--;
+            } else {
+                bInString = false;
+            }
+        }
+       
+        sDigits = (bInString)?sDigits.substr(0, iCount-1):"";
+      
+        return sTest;
+    }
+    
+    
+    
+.. _div_get_next_digit_ref:
+    
+    Getting the next digit from the dividend
+    ----------------------------------------
+    
+    Get the next digit from the dividend and add it after the least significant digit of ``lNRemainder``\ 's digits.
+    If there are no more digits, use a '0'.
+    
+.. code-block:: c++
+
+    std::string LongNum::getNextDigit(std::string &sDigits, LongNum lNRemainder, bool *pbDotSet) {
   
         std::string sRemainder = lNRemainder.normalize().getDigits();
         if (sDigits.length() > 0) {

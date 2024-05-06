@@ -29,6 +29,7 @@ which make the operands positive but keeep track of the sign for the result.
    :maxdepth: 1
 
    algorithms/square_root
+   algorithms/square_root_example
 
 **The Algorithms for Arbitrary Numbers**
 
