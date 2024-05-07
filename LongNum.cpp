@@ -239,31 +239,37 @@ void LongNum::unshift(uint iNum) {
 //
 LongNum &LongNum::normalize() {
     
-    // find first nonzero digit starting from the least significant digit, but before reaching the decimal point
-    uint iLSD = 0;
-    while ((iLSD < m_sDigits.length()) && (m_sDigits.at(iLSD) == '0') && (iLSD < m_iPostDigits) ) {
-        iLSD++;
-    }
-    
-    uint iMSD = m_sDigits.length()-1;
-    while ((iMSD > iLSD) && (m_sDigits.at(iMSD) == '0')) {
-        iMSD--;
-    }
+    if (m_sDigits.length() > 0) {
+
+        // find first nonzero digit starting from the least significant digit, but before reaching the decimal point
+        uint iLSD = 0;
+        while ((iLSD < m_sDigits.length()) && (m_sDigits.at(iLSD) == '0') && (iLSD < m_iPostDigits) ) {
+            iLSD++;
+        }
+      
+        uint iMSD = m_sDigits.length()-1;
+        while ((iMSD > iLSD) && (m_sDigits.at(iMSD) == '0')) {
+            iMSD--;
+        }
  
-    if (iMSD < iLSD) {
-        m_sDigits    = "0";
+        if (iMSD < iLSD) {
+            m_sDigits    = "0";
+            m_iPostDigits = 0;
+            m_iSign      = 1;
+        } else {
+            m_sDigits =  m_sDigits.substr(iLSD, iMSD - iLSD + 1);
+            m_iPostDigits -= iLSD;
+        }
+        
+        // make sure there are enough leading digits to represent a 
+        while (m_iPostDigits > m_sDigits.length()) {
+            m_sDigits = m_sDigits+"0";
+        }
+    } else {
+        m_sDigits = "0";
         m_iPostDigits = 0;
         m_iSign      = 1;
-    } else {
-        m_sDigits =  m_sDigits.substr(iLSD, iMSD - iLSD + 1);
-        m_iPostDigits -= iLSD;
     }
-
-    // make sure there are enough leading digits to represent a 
-    while (m_iPostDigits > m_sDigits.length()) {
-        m_sDigits = m_sDigits+"0";
-    }
-
     return *this;
 }
 
@@ -873,7 +879,7 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
             // L4 - L7
             NSub = findLargestSubtractor(NRem, sResult, iPrecision);
             
-            printf("Rem %s, sub %s\n", NRem.toString().c_str(), NSub.toString().c_str());
+            //printf("Rem %s, sub %s\n", NRem.toString().c_str(), NSub.toString().c_str());
             i++;
         }
         

@@ -67,36 +67,36 @@ void scan(TokenScanner &ts) {
 // help
 //
 void help() {
-    printf("\n----------------------------------------------------------------------------\n");
-    printf("interactive calculator for arbitrary-length numbers in arbitrary bases\n");
-    printf("supported operations:\n");
-    printf("'+'   addition\n");
-    printf("'-'   subtraction\n");
-    printf("'*'   multiplication\n");
-    printf("'/'   division\n");
-    printf("_sqrt()  square-root function\n");
-    printf("_round() round to next integer\n");
-    printf("_trunc() truncate (remove fraction part of number)\n");
-    printf("\n");
-    printf("Variable names must start with '$':");
-    printf("To set variable, use '=', e.g. $a3=417.87\n");
-    printf("To display variable, type its name\n");
+     std::cout <<"\n----------------------------------------------------------------------------\n";
+     std::cout << "interactive calculator for arbitrary-length numbers in arbitrary bases\n";
+     std::cout << "supported operations:\n";
+     std::cout << "'+'   addition\n";
+     std::cout << "'-'   subtraction\n";
+     std::cout << "'*'   multiplication\n";
+     std::cout << "'/'   division\n";
+     std::cout << "_sqrt()  square-root function\n";
+     std::cout << "_round() round to next integer\n";
+     std::cout << "_trunc() truncate (remove fraction part of number)\n";
+     std::cout << "\n";
+     std::cout << "Variable names must start with '$':";
+     std::cout << "To set variable, use '=', e.g. $a3=417.87\n";
+     std::cout << "To display variable, type its name\n";
 
-    printf("If you place a '!' in the fromt of an expression,\n");
-    printf("the result will be followed by its internal representation (digits, number of postcomma digits, sign)\n");
+     std::cout << "If you place a '!' in the fromt of an expression,\n";
+     std::cout << "the result will be followed by its internal representation (digits, number of postcomma digits, sign)\n";
 
-    printf("other commands:\n");
-    printf("setprec <prec>    set precision (i.e. number of digits)\n");
-    printf("setbase <prec>    set base (2 <= base < %u)\n", DigitOperationTables::max_base);
-    printf("                  (the currently used base is part of the input prompt)\n");
-    printf("show              display current precision, base and variable values\n");
-    printf("exit              exit program\n");
-    printf("\n");
-    printf("All numbers are internally represented by strings, and\n");
-    printf("all the operations are performed digit-wise using the\n");
-    printf("'normal' algorithms for calculations by hand\n");
-    printf("----------------------------------------------------------------------------\n");
-    printf("\n");
+     std::cout << "other commands:\n";
+     std::cout << "setprec <prec>    set precision (i.e. number of digits)\n";
+     std::cout << "setbase <prec>    set base (2 <= base < " << std::to_string(DigitOperationTables::max_base) << ")\n";
+     std::cout << "                  (the currently used base is part of the input prompt)\n";
+     std::cout << "show              display current precision, base and variable values\n";
+     std::cout << "exit              exit program\n";
+     std::cout << "\n";
+     std::cout << "All numbers are internally represented by strings, and\n";
+     std::cout << "all the operations are performed digit-wise using the\n";
+     std::cout << "'normal' algorithms for calculations by hand\n";
+     std::cout << "----------------------------------------------------------------------------\n";
+     std::cout << "\n";
 }
         
 
@@ -141,29 +141,30 @@ int main(int iArgC, char *apArgV[]) {
                 if (iPrec > 0) {
                     pEv->setPrec(iPrec);
                 } else {
-                    printf("Inavlaid value for precision:[%s]\n", s.substr(pos).c_str());
+                    std::cout << "Inavlaid value for precision:[" << s.substr(pos) << "]\n";
                 }
             } else {
-                printf("Expected integer after 'setprec':[%s]\n", s.c_str());
+                std::cout << "Expected integer after 'setprec':[" << s << "]\n";
             }
         } else if (s.find("setbase") == 0) {
             size_t pos = s.find_first_of("0123456789");
             if (pos != std::string::npos) {
-                iBase = atoi(s.substr(pos).c_str());
-                if ((iBase > 1) && (iBase < DigitOperationTables::max_base)) {
-                    pEv->setBase(iBase);
+                uint iTempBase = atoi(s.substr(pos).c_str());
+                if ((iTempBase > 1) && (iTempBase < DigitOperationTables::max_base)) {
+                    pEv->setBase(iTempBase);
+                    iBase = iTempBase;
                 } else {
-                    printf("Inavalid value for base:[%s]\n", s.substr(pos).c_str());
+                    std::cout << "Inavalid value for base:[" << s.substr(pos) << "]\n";
                 }
             } else {
-                printf("Expected integer after 'setbase':[%s]\n", s.c_str());
+                    std::cout << "Expected integer after 'setbase':[" <<s << "]\n";
             }
         } else if (s == "?") {
             help();
         } else if (s == "") {
             bGoOn = false;
         } else { 
-            //printf("s:[%s](%zd), trim(s):[%s](%zd)\n", s.c_str(),s.length(), trim(s).c_str(), trim(s).length());
+            // std::cout << "s:[%s](%zd), trim(s):[%s](%zd)\n", s.c_str(),s.length(), trim(s).c_str(), trim(s).length());
             if (trim(s).length() > 0) {
                 bool bDebug = false;
                 if (s[0] == '!') {
@@ -178,7 +179,7 @@ int main(int iArgC, char *apArgV[]) {
                     }
                     std::cout << "\n";
                 } catch  (std::string sErr) {
-                    printf("Eception: [%s]\n", sErr.c_str());
+                    std::cout << "Eception: [" << sErr << "]\n";
                     
                 }
             }
@@ -192,7 +193,7 @@ int main(int iArgC, char *apArgV[]) {
     LongNum zero("0", BASE);
 
     LongNum res = parseExpression(ts, BASE);
-    printf("result: [%s]\n", res.toString().c_str());
+     std::cout << "result: [%s]\n", res.toString().c_str());
     */
     delete pEv;
     return iResult;
