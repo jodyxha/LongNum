@@ -16,7 +16,10 @@ COPT=-c $< -o $@ $(CADD) $(CFLAGS)
 clean: 
 	rm -f *.o lcalc
 
-all: lcalc
+test: longnum_test
+
+
+all: lcalc longnum_test
 
 DigitOperationTables.o: DigitOperationTables.cpp DigitOperationTables.h
 	$(CC) $(COPT) $(DEFS) 
@@ -39,3 +42,11 @@ lcalc.o: lcalc.cpp Evaluator.h TokenScanner.h LongNum.h BaseManager.h
 lcalc: lcalc.o DigitOperationTables.o BaseManager.o LongNum.o TokenScanner.o Evaluator.o
 	$(CC) $(COMP) -o lcalc \
         lcalc.o DigitOperationTables.o BaseManager.o LongNum.o TokenScanner.o Evaluator.o
+
+longnum_test.o: longnum_test.cpp  LongNum.h
+	$(CC) $(COPT) $(DEFS)  
+
+longnum_test: longnum_test.o DigitOperationTables.o BaseManager.o LongNum.o
+	$(CC) $(COMP) -o longnum_test \
+        longnum_test.o DigitOperationTables.o BaseManager.o LongNum.o 
+
