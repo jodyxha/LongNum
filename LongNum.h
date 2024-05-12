@@ -70,7 +70,7 @@ public:
 
     LongNum appendDigits(std::string sNewDigits) {m_sDigits = sNewDigits+m_sDigits; return *this;};
 
-    static LongNum changeBase(LongNum N, uchar toBase);
+    static LongNum changeBase(LongNum N, uchar toBase, uint iPrecision);
 
     const std::string &getDigits() {return m_sDigits;};
     int getSign() {return m_iSign;};

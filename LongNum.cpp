@@ -905,7 +905,7 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
 //----------------------------------------------------------------------------
 // changeBase
 //
-LongNum LongNum::changeBase(LongNum N, uchar toBase) {
+LongNum LongNum::changeBase(LongNum N, uchar toBase, uint iPrecision) {
     LongNum one("1", toBase);
     LongNum zero("0", toBase);
     char tb = N.getOperationTables()->getDigitSym(toBase);
@@ -925,7 +925,7 @@ LongNum LongNum::changeBase(LongNum N, uchar toBase) {
     char sBuf[n+1];
     sprintf(sBuf, "%d", N.getPostDigits());
     LongNum NDivisor = LongNum::pow(NFromBase, LongNum(sBuf, 10));
-    lNRes = lNRes.div(NDivisor, 20); 
+    lNRes = lNRes.div(NDivisor,  iPrecision); 
     return LongNum(lNRes.normalize());
 }
 

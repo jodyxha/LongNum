@@ -34,7 +34,7 @@ void Evaluator::setBase(uchar iBase) {
     // change representation for all variables
     varmap::iterator it;
     for (it = mVars.begin(); it != mVars.end(); ++it) {
-        it->second = LongNum::changeBase(it->second, iBase);
+        it->second = LongNum::changeBase(it->second, iBase, m_iPrec);
     }
     m_iBase = iBase;
 }
