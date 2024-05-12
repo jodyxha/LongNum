@@ -17,29 +17,40 @@ Algorithm Details
 
 1. | The first step is to make digits group starting at the decimal point and moving towards the most significant digit, and from the decimal towards the least significant digit.
    | The highest group can contain one digit (you may prepend a 0 to make it a proper 2-digit group, but this does not matter to the algorithm).
-   | Furthermore, we imagine the fractoional part of thr number to be followed by as many pairs "00" as needed for the desired accuracy of the result.
-   | Let P be the number represented by the highest group.
+   | Furthermore, we imagine the fractional part of the number to be followed by as many pairs "00" as needed for the desired accuracy of the result.
+   | Let :math:`P` be the number represented by the highest group.
 
-For example, the number ``54328.179`` would be grouped and padded like this: ``05|43|28|.17|90|00|00``, and in this case P = 5.
+For example, the number ``54328.179`` would be grouped and padded like this: ``05|43|28|.17|90|00|00``, and in this case :math:`P = 5`.
 
-2. | Now find the highest one-digit number *s* whose square is less than *P*-
-   | The digit *s* is the first digit of the solution.
+2. | Now find the highest one-digit number :math:`s` whose square is less than or equal to  :math:`P`. 
+   | :math:`~~~~s = max \{0\leq i < b \; | \; i^2 \leq P\}`
+   | The digit :math:`s` is the first digit of} the solution :math;`L`:
+   | :math:`~~~~L=s`
 
-3. | Subtract *s*\ :sup:`2` from the leading group yielding a number *r*: *r* = *P* -  *s*\ :sup:`2`.
+3. | Subtract :math:`s^2` from the leading group yielding a number :math:`r`: 
+   | :math:`~~~~r = P - s^2`
 
 Here follows a loop which produces an additional digit of the solution in each iteration.
 
-1. | if there still are more digit pairs left from the argument, then append the next on to *r* yielding *r'*.
-   | if there are no more digit pairs,, append '00' to *r* yielding *r'*
+**Loop**
 
-2. | if the select digit pair is the first **after** the deimal point, add a decimal point to the solution.
+1. | Get the next pair of digits :math:`P` from the argument, and append to :math:`r`: 
+   | :math:`~~~~r' = r \circ P`
+   | (there will always be a next pair, because we consider the tail of the argument to consist of an infinite sequence of pairs "00")
 
-3. | form a number *L* from the current digits, double it and then multply it by 10 (i.e. multiply the base *b*), h = 10*2*L
+2. | If the selected digit pair :math:`P` is the first pair **after** the decimal point, add a decimal point to the solution.
 
-4. | find the highest digit *x*, such that p = x * (h + x) |leq| r'  
-   | the digit x is the next digit of the solution, so append it to L: L = Lx
+3. | Form a number :math:`L` from the current digits, double it and then multply it by 10 (i.e. multiply the base :math:`b`):
+   | :math:`~~~~h = b \times 2 \times L`
+   | (in base 2, we effectivley append '00' to L)
 
-5. | Subtract the product *p* from *r'* to get the new value of *r*
+4. | Find the highest digit :math:`x`, such that 
+   | :math:`p = x * (h + x) \leq r'`  
+   | The digit :math:`x` is the next digit of the solution, so append it to L: 
+   | :math:`~~~~L \longrightarrow L \circ x`
+
+5. | Subtract the product :math:`p` from :math:`r'` to get the new value of *r* 
+   | :math:`~~~~r = r' - p`
 
 6. | If the number of digits of ther solution is sufficient, exit the loop; otherwise go to step 1
 
