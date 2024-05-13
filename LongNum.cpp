@@ -682,7 +682,7 @@ LongNum LongNum::div(LongNum &lN, uint iPrecision) {
 //   "0"+highest digit if length is odd
 //   at exit the length of sDigits is even
 //
-std::string LongNum::getFirstPair(std::string &sDigits, uint iPostDigits,  bool *pbAfterDot) {
+std::string LongNum::getFirstPair(std::string &sDigits, uint iPostDigits) {
     std::string s("");
     
     if (((sDigits.length()-iPostDigits)%2) == 0) {
@@ -704,7 +704,7 @@ std::string LongNum::getFirstPair(std::string &sDigits, uint iPostDigits,  bool 
 //   get the next two digit of sDigits, or "00" if empty
 //   (assumption: length of sDigits is even)
 //
-std::string LongNum::getNextPair(std::string &sDigits, bool *pbAfterDot) {
+std::string LongNum::getNextPair(std::string &sDigits, bool *pbInZeroTail) {
     std::string s("");
     // after the decimal point, there may be an odd number of digits!
     if (!sDigits.empty()) {
@@ -719,7 +719,7 @@ std::string LongNum::getNextPair(std::string &sDigits, bool *pbAfterDot) {
     } else {
         // no more digits: use "00"
         s = "00";
-        (*pbAfterDot) |= true;
+        (*pbInZeroTail) |= true;
     }
     return s;
 }
@@ -756,6 +756,11 @@ LongNum LongNum::findLargestSubtractor(LongNum NRem, std::string &sResult, uint 
         NQ   = zero;
         NSub = zero;
     } else {
+        // in base 10 we could convert sResult and NReM to integers and find
+        //   q = trunc(-10*iRes + ::sqrt(100*iRes*iRes + iRem))
+        // but in other bases this would not work.
+        // Here we have to estimat an upper limit and work our way downwards until we find a fitting value.
+
         // NRem/NTester is an upper limit for our q, because then 
         // q*(NTester+q) = NRem + (NRem/NTester)^2 >= NRem
         NQ = NRem.div(NTester, iPrecision);
@@ -808,7 +813,7 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
     //printf("sqrt([%s], ipostdigits[%u])\n", lN.getDigits().c_str(), lN.getPostDigits());
     LongNum one("1", lN.getBase());
     LongNum zero("0", lN.getBase());
-    bool bAfterDot = false;
+    bool bInZeroTail = false;
     int iPostDigits = 0;
     
     if (lN.isNegative()) {
@@ -843,12 +848,8 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
 
         // find first (odd length) or first two digits (even length); 
         // make two-char string (zeropad on the right,  e.g. '7' -> "70")
-        std::string s1 = getFirstPair(sDigits, lN.getPostDigits(), &bAfterDot);
+        std::string s1 = getFirstPair(sDigits, lN.getPostDigits());
        
-        if (bAfterDot) {
-            iPostDigits++;
-        }
-
         // I2:
         char q = lN.getOperationTables()->sqrt(s1); // q is the first value of the result
         sResult += q; 
@@ -866,8 +867,8 @@ LongNum LongNum::sqrt(LongNum lN, uint iPrecision) {
             NRem = NRem - NSub;
   
             // L2:
-            std::string s2 = getNextPair(sDigits, &bAfterDot);
-            if (bAfterDot) {
+            std::string s2 = getNextPair(sDigits, &bInZeroTail);
+            if (bInZeroTail) {
                 iPostDigits++;
             }
       

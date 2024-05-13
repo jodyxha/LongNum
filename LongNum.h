@@ -86,7 +86,7 @@ protected:
     static std::string getNextDigit(std::string &sDigits, LongNum lNRest, bool *pbDotSet);
     static uchar simpleDiv(LongNum lN1, LongNum lN2, LongNum &lNRest);
 
-    static std::string getFirstPair(std::string &sDigits, uint iPostDigits, bool *pbAfterDot);
+    static std::string getFirstPair(std::string &sDigits, uint iPostDigits);
     static std::string getNextPair(std::string &sDigits, bool *pbAfterDot);
     
     static stringvec splitToPairs(std::string &sDigits, uint iPostDigits);

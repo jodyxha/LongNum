@@ -36,9 +36,9 @@ Get the next pair and append it to the remainder
 
 .. figure:: ../../images/sqrt_it_1_loop_1.png
 
-Now find the largest number :math:`x` such that :math:`x * (20*2 + x)` is less than or equal to the remainder :math:`r=143`, where :math:`s` consists of the current solution's digits.  
+Now find the largest number :math:`x` such that :math:`x \times (20 \times 2 + x)` is less than or equal to the remainder :math:`r=143`, where :math:`s` consists of the current solution's digits.  
 This number is the next digit of the solution.
-In this case we have 3*(40+3) = 129 < 143.
+In this case we have :math:`3 \times (40+3) = 129 < 143`.
 
 .. figure:: ../../images/sqrt_it_1_loop_2.png
 
@@ -50,7 +50,7 @@ We repeat the loop again: append the next pair to the remainder
 
 .. figure:: ../../images/sqrt_it_2_loop_1.png
 
-find the largest number :math:`x` satisfying :math:`x*(20*23s + x) \leq 1428`
+The largest number :math:`x` satisfying :math:`x \times (20 \times 23 + x) \leq 1428` is :math:`x=3`
 
 .. figure:: ../../images/sqrt_it_2_loop_2.png
 
@@ -59,11 +59,11 @@ append this number to the solution digits and calculate the remainder
 .. figure:: ../../images/sqrt_it_2_loop_3.png
 
 The next iteration again begins by expanding the remainder with the next pair of input digits,
-but because it is the first pair after the input's decinal point we must add the decimal point to the solution.
+but because it is the first pair after the input's decimal point we must add the decimal point to the solution.
 
 .. figure:: ../../images/sqrt_it_3_loop_1.png
 
-Determine the next solution digit. Here the value :math:`20*233 = 4660` is greater than :math:3917:, so the nest digit is 0. 
+Determine the next solution digit. Here the value :math:`20 \times 233 = 4660` is greater than :math:`3917`, so the next digit of the solution is 0. 
 
 .. figure:: ../../images/sqrt_it_3_loop_2.png
 
@@ -83,9 +83,11 @@ and write the remainder
 
 .. figure:: ../../images/sqrt_it_4_loop_3.png
 
-Another iteration
+Another iteration. From now on, the appended pairs are always "00", since we've used up all digits of the original number.
 
 .. figure:: ../../images/sqrt_it_5_loop_1.png
+
+The next digit of the solution is 4, because :math:`4 \times 466164 = 1864656 < 1892600`, whereas :math:`5 \times 466164 = 2330825 > 1892600`.
 
 .. figure:: ../../images/sqrt_it_5_loop_2.png
 

@@ -61,8 +61,8 @@ We must collect the minimum amount of digits from the MSD so the resulting numbe
     
 .. _div_get_next_digit_ref:
     
-    Getting the next digit from the dividend
-    ----------------------------------------
+Getting the next digit from the dividend
+----------------------------------------
     
     Get the next digit from the dividend and add it after the least significant digit of ``lNRemainder``\ 's digits.
     If there are no more digits, use a '0'.
@@ -114,8 +114,8 @@ We implement this by repeatedly subtracting the divisor from the dividend.
 
 .. _div_pos_ref:
 
-The algorithm for the division of two positive numbers (``LongNum`` objects) with arbitrary length.
-------------------------------------------------------------------------------------------------------
+The algorithm for the division of two positive numbers (``LongNum`` objects) with arbitrary length
+--------------------------------------------------------------------------------------------------
 
 **Input**:
     | lN1  positive ``LongNum`` object
