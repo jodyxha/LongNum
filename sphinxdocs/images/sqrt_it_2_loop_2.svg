@@ -7,7 +7,7 @@
    viewBox="0 0 600 800"
    version="1.1"
    id="svg5"
-   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
    sodipodi:docname="sqrt_it_2_loop_2.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,9 +25,9 @@
      inkscape:document-units="mm"
      showgrid="false"
      showguides="true"
-     inkscape:zoom="0.35355339"
-     inkscape:cx="4.2426407"
-     inkscape:cy="810.34437"
+     inkscape:zoom="1"
+     inkscape:cx="1482"
+     inkscape:cy="835"
      inkscape:window-width="1920"
      inkscape:window-height="1029"
      inkscape:window-x="0"
@@ -1455,13 +1455,13 @@
            ry="0.93405271" />
         <text
            xml:space="preserve"
-           style="font-size:22.5778px;line-height:1.25;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#000000;fill-opacity:1;stroke-width:0.264583"
+           style="font-size:22.5778px;line-height:1.25;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#00c000;fill-opacity:1;stroke-width:0.264583"
            x="153.75105"
            y="394.92313"
            id="text846-2-3-6-7-1-1-7-0-3-9-5-2-2-0-6-9-9"><tspan
              sodipodi:role="line"
              id="tspan844-7-7-3-6-4-7-7-4-6-6-9-8-2-6-0-1-9"
-             style="fill:#000000;fill-opacity:1;stroke-width:0.264583"
+             style="fill:#00c000;fill-opacity:1;stroke-width:0.264583"
              x="153.75105"
              y="394.92313">3</tspan></text>
       </g>

@@ -94,11 +94,15 @@ The next digit of the solution is 4, because :math:`4 \times 466164 = 1864656 < 
 .. figure:: ../../images/sqrt_it_5_loop_3.png
 
 
-And another
+And another one: get the next pair of digits ...
 
 .. figure:: ../../images/sqrt_it_6_loop_1.png
 
+... find the next digit of the solution ...
+
 .. figure:: ../../images/sqrt_it_6_loop_2.png
+
+... and calculate the reminder
 
 .. figure:: ../../images/sqrt_it_6_loop_3.png
 

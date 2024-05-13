@@ -7,7 +7,7 @@
    viewBox="0 0 600 800"
    version="1.1"
    id="svg5"
-   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
    sodipodi:docname="sqrt_it_0_loop_2.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -26,14 +26,14 @@
      showgrid="false"
      showguides="true"
      inkscape:zoom="1"
-     inkscape:cx="141.5"
-     inkscape:cy="265.5"
+     inkscape:cx="1644.5"
+     inkscape:cy="266"
      inkscape:window-width="1920"
      inkscape:window-height="1029"
      inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g118311-2-3-0-6"
      inkscape:lockguides="false">
     <sodipodi:guide
        position="9.4688707,775.79999"
@@ -1112,13 +1112,13 @@
              ry="0.93405271" />
           <text
              xml:space="preserve"
-             style="font-size:22.5778px;line-height:1.25;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#000000;fill-opacity:1;stroke-width:0.264583"
+             style="font-size:22.5778px;line-height:1.25;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#00c000;fill-opacity:1;stroke-width:0.264583"
              x="553.33661"
              y="377.12564"
              id="text846-2-3-2-3-8-4-7-9-6-2-7-4-5-0-7-6-28"><tspan
                sodipodi:role="line"
                id="tspan844-7-7-9-0-4-8-7-6-2-4-5-2-0-1-0-2-9"
-               style="fill:#000000;fill-opacity:1;stroke-width:0.264583"
+               style="fill:#00c000;fill-opacity:1;stroke-width:0.264583"
                x="553.33661"
                y="377.12564">2</tspan></text>
         </g>
