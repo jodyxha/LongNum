@@ -58,3 +58,4 @@ Here follows a loop which produces an additional digit of the solution in each i
 
 
 Click :ref:`here<square_root_example_ref>` for a detailed example of the application of this algorithm to a number.
+

@@ -11,8 +11,8 @@ In addition to that, there is also the implementation of a longhand square root.
 
 The actual implementations  handle only positive numbers (including 0).
 
-In order to deal with negative numbers, as well, thre are some helper functions 
-which make the operands positive but keeep track of the sign for the result.
+In order to deal with negative numbers, as well, there are some helper functions 
+which make the operands positive but keep track of the sign for the result.
 
 
 **The Algorithms for Positive Numbers**

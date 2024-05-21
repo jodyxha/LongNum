@@ -95,7 +95,7 @@ to numbers.
 
 We have limited the range of bases to be between 2 and 36 
 (numerals and lowercase alphabet) in order to have number representations 
-that don't look too odd, as oppposed to, for example, ``4$9a%?_3}!2``.
+that don't look too odd (such as, for example, ``4$9a%?_3}!2``).
 
 
 .. _add_table_ref:
@@ -105,10 +105,7 @@ The Addition Table
 
 The elements of the addition tables are pairs of carry and addition results 
 indexed by digits.
-The array ``dig_list`` serves as a look-up for digit symbols corresponding 
-to numbers. We have limited the range of bases to be between 2 and 36 
-(numerals and lowercase alphabet) in order to have number representations 
-that don't look too odd, like for example ``4$9a%?_3}!2``.
+
 
 
 .. code-block:: c++

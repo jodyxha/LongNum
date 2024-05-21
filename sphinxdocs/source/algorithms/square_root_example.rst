@@ -36,7 +36,7 @@ Get the next pair and append it to the remainder
 
 .. figure:: ../../images/sqrt_it_1_loop_1B.png
 
-Now find the largest number :math:`x` such that :math:`x \times (20 \times 2 + x)` is less than or equal to the remainder :math:`r=143`, where :math:`s` consists of the current solution's digits.  
+Now find the largest number :math:`x` such that :math:`x \times (20 \times s + x)` is less than or equal to the remainder :math:`r=143`, where :math:`s` consists of the current solution's digits ("2").  
 This number is the next digit of the solution.
 In this case we have :math:`3 \times (40+3) = 129 < 143`.
 
